@@ -10,54 +10,54 @@ LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler) {
     this->symbolTableHandler   = symbolTableHandler;
     this->currentState         = minimalDFAStartState;
     this->currentIndexInSource = 0;
-    this->currentToken         = "";
+    this->currentLexeme        = Lexeme();
 }
 
-State LexicalAnalyser::getExampleDFA() {
-    // Creating states
-    State state0137;
-    State state247;
-    State state8("a*b+");
-    State state7;
-    State state68("abb");
-    State state58("a*b+");
+State* LexicalAnalyser::getExampleDFA() {
+    // Creating heap-allocated states
+    State* state0137 = new State();
+    State* state247  = new State("a");
+    State* state8    = new State("a*b+");
+    State* state7    = new State();
+    State* state68   = new State("abb");
+    State* state58   = new State("a*b+");
 
     // Marking final states
-    state247.isFinal = true;
-    state8.isFinal   = true;
-    state58.isFinal  = true;
+    state247->isFinal = true;
+    state8->isFinal   = true;
+    state58->isFinal  = true;
+    state68->isFinal  = true;
 
-    // Adding transitions
-    // Transitions for state0137
-    state0137.addTransition('a', state247);
-    state0137.addTransition('b', state8);
+    // Adding transitions for state0137
+    state0137->addTransition('a', state247);
+    state0137->addTransition('b', state8);
 
-    // Transitions for state247
-    state247.addTransition('a', state247);
-    state247.addTransition('b', state58);
+    // Adding transitions for state247
+    state247->addTransition('a', state7);
+    state247->addTransition('b', state58);
 
-    // Transitions for state8
-    state8.addTransition('b', state8);
+    // Adding transitions for state8
+    state8->addTransition('b', state8);
 
-    // Transitions for state7
-    state7.addTransition('a', state247);
-    state7.addTransition('b', state68);
+    // Adding transitions for state7
+    state7->addTransition('a', state7);
+    state7->addTransition('b', state8);
 
-    // Transitions for state68
-    state68.addTransition('b', state8);
+    // Adding transitions for state68
+    state68->addTransition('b', state8);
 
-    // Transitions for state58
-    state58.addTransition('b', state8);
+    // Adding transitions for state58
+    state58->addTransition('b', state68);
 
     // The DFA starts at state0137, so we return it
     return state0137;
 }
 
-std::string LexicalAnalyser::nextToken() {
+Lexeme LexicalAnalyser::nextToken() {
 
-    if (!currentToken.empty()) {
-        auto token   = currentToken;
-        currentToken = "";
+    if (!currentLexeme.getValue().empty()) {
+        auto token    = currentLexeme;
+        currentLexeme = Lexeme();
         return token;
     }
 
@@ -89,7 +89,7 @@ std::string LexicalAnalyser::nextToken() {
         fullBuffer.insert(fullBuffer.end(), buffer.begin(), buffer.begin() + static_cast<int>(bytesRead));
 
         for (int i = startBufferIndex * BUFFER_SIZE; i < fullBuffer.size(); i++) {
-            std::vector<State> nextStates = currentState.applyTransition(buffer[i]);
+            std::vector<State*> nextStates = currentState->applyTransition(fullBuffer[i]);
 
             if (nextStates.empty()) {
 
@@ -97,19 +97,22 @@ std::string LexicalAnalyser::nextToken() {
                     logError(fullBuffer, errorBackupIndex, i);
                     i = errorBackupIndex++;
                 } else {
-                    currentToken = longestMatchState.token;
+                    auto longestMatchTokenValue =
+                        std::string(fullBuffer.begin(), fullBuffer.begin() + longestMatchIndex + 1);
+
+                    currentLexeme = Lexeme(longestMatchState.token, longestMatchTokenValue);
                     currentIndexInSource += longestMatchIndex + 1;
-                    currentState = getExampleDFA();
-                    return currentToken;
+                    currentState = minimalDFAStartState;
+                    return currentLexeme;
                 }
 
             } else {
 
                 currentState = nextStates[0];
-                if (currentState.isFinal) {
+                if (currentState->isFinal) {
                     longestMatchIndex = i;
                     errorBackupIndex  = i + 2;
-                    longestMatchState = currentState;
+                    longestMatchState = *currentState;
                 }
             }
         }
@@ -117,12 +120,23 @@ std::string LexicalAnalyser::nextToken() {
         startBufferIndex++;
     }
 
-    return "";
+    if (longestMatchIndex != -1) {
+        auto longestMatchTokenValue =
+                        std::string(fullBuffer.begin(), fullBuffer.begin() + longestMatchIndex + 1);
+        currentLexeme = Lexeme(longestMatchState.token, longestMatchTokenValue);
+        currentIndexInSource += longestMatchIndex + 1;
+        currentState = minimalDFAStartState;
+        return currentLexeme;
+    }
+
+    logError(fullBuffer, errorBackupIndex - 1, fullBuffer.size());
+
+    return Lexeme();
 }
 
 bool LexicalAnalyser::hasNextToken() {
-    currentToken = nextToken();
-    return !currentToken.empty();
+    currentLexeme = nextToken();
+    return !currentLexeme.getValue().empty();
 }
 
 void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const std::string& outputFilePath) {
@@ -136,14 +150,19 @@ void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const
     }
 
     while (hasNextToken()) {
-        auto currentToken = nextToken();
-        outputFile << currentToken << std::endl;
+        auto currentLexeme = nextToken();
+        outputFile << currentLexeme.getTokenType() << std::endl;
+
+        std::regex idPattern("^id\\w*$", std::regex::icase);
+        if (std::regex_match(currentLexeme.getTokenType(), idPattern)) {
+            symbolTableHandler.addSymbol(currentLexeme.getValue());
+        }
     }
 
     outputFile.close();
 }
 
-void LexicalAnalyser::logError(std::vector<char> fullBuffer,const int errorBackupIndex,const int i) const {
+void LexicalAnalyser::logError(std::vector<char> fullBuffer, const int errorBackupIndex, const int i) const {
     const std::string errorSubstring(fullBuffer.begin() + errorBackupIndex - 1, fullBuffer.begin() + i);
     std::cerr << "Can't recognize token at index " + std::to_string(currentIndexInSource + i)
                      + ", problematic substring: \"" + errorSubstring + "\""
@@ -153,5 +172,5 @@ void LexicalAnalyser::logError(std::vector<char> fullBuffer,const int errorBacku
 void LexicalAnalyser::reset() {
     this->currentState         = minimalDFAStartState;
     this->currentIndexInSource = 0;
-    this->currentToken         = "";
+    this->currentLexeme        = Lexeme();
 }

@@ -10,12 +10,14 @@
 
 class SymbolTableHandler {
 
-    enum class SymbolType { Integer, Float, Boolean };
+    enum class SymbolType { Integer, Float, Boolean, None };
 
     class SymbolTableEntry {
         SymbolType type;
 
     public:
+
+        explicit SymbolTableEntry() : type(SymbolType::None) {}
         explicit SymbolTableEntry(const SymbolType type) : type(type) {}
         [[nodiscard]] SymbolType getType() const {
             return type;
@@ -39,7 +41,7 @@ class SymbolTableHandler {
 public:
     SymbolTableHandler();
 
-    bool addSymbol(const std::string& symbol, SymbolType type);
+    bool addSymbol(const std::string& symbol);
     SymbolTableEntry getSymbol(const std::string& symbol);
     bool containsSymbol(const std::string& symbol) const;
     void clear();

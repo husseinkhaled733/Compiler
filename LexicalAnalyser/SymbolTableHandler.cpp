@@ -6,11 +6,11 @@
 
 SymbolTableHandler::SymbolTableHandler() = default;
 
-bool SymbolTableHandler::addSymbol(const std::string& symbol, const SymbolType type) {
+bool SymbolTableHandler::addSymbol(const std::string& symbol) {
     if (symbolTable.contains(symbol))
         return false;
 
-    symbolTable[symbol] = SymbolTableEntry(type);
+    symbolTable[symbol] = SymbolTableEntry(SymbolType::None);
     return true;
 }
 

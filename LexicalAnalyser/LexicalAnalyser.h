@@ -5,6 +5,7 @@
 #ifndef LEXICALANALYSER_H
 #define LEXICALANALYSER_H
 
+#include "Lexeme.h"
 #include "State.h"
 #include "SymbolTableHandler.h"
 #include <bits/stdc++.h>
@@ -14,28 +15,25 @@ class LexicalAnalyser {
 
     SymbolTableHandler symbolTableHandler;
 
-    std::string sourceFilePath;
-    std::string outputFilePath;
+    std::string sourceFilePath, outputFilePath;
 
-    State currentState;
+    State *currentState, *minimalDFAStartState;
     long long currentIndexInSource;
-    std::string currentToken;
+    Lexeme currentLexeme;
 
     const int BUFFER_SIZE = 1024;
-
-    State minimalDFAStartState;
 
 public:
 
     explicit LexicalAnalyser(const SymbolTableHandler& symbolTableHandler);
 
-    std::string nextToken();
+    Lexeme nextToken();
     bool hasNextToken();
     void tokenizeInputFile(const std::string& sourceFilePath, const std::string& outputFilePath);
     void logError(std::vector<char> fullBuffer, int errorBackupIndex, int i) const;
     void reset();
 
-    static State getExampleDFA(); // will be removed
+    static State* getExampleDFA(); // will be removed
 
 };
 
