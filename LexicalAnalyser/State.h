@@ -17,6 +17,6 @@ class State
         bool isFinal = false;
         std::unordered_map<char, std::vector<State>> transitions;
         void addTransition(char input, State state);
-        std::vector<State> applyTransition(const char input)
+        std::vector<State> applyTransition(char input);
 };
 #endif //STATE_H
