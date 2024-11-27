@@ -15,8 +15,8 @@ class State
 
         std::string token;
         bool isFinal = false;
-        std::unordered_map<char, State> transitions;
+        std::unordered_map<char, std::vector<State>> transitions;
         void addTransition(char input, State state);
-        State applyTransition(char input);
+        std::vector<State> applyTransition(const char input)
 };
 #endif //STATE_H
