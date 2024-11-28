@@ -13,13 +13,13 @@ State::State(const std::string& token)
     this->isFinal = true;
 }
 
-std::vector<State> State::applyTransition(const char input)
+std::vector<State*> State::applyTransition(const char input)
 {
     return this->transitions[input];
 }
 
-void State::addTransition(const char input, State state)
+void State::addTransition(const char input, State* state)
 {
-    this->transitions[input].push_back(std::move(state));
+    this->transitions[input].push_back(state);
 }
 
