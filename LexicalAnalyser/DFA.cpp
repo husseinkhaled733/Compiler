@@ -15,16 +15,18 @@ State* DFA::convertNFAtoDFA(State *startState) {
     startSet = epsilonClosure(startSet);
     needToProcess.push(startSet);
     dfaStates[startSet] = new State();
+    handleTokenPriorities(dfaStates, startSet);
     dfaStartState = dfaStates[startSet];
     while (!needToProcess.empty()) {
         State* currentState = dfaStates[needToProcess.front()];
         set<State*> currentNFASet = needToProcess.front();
         needToProcess.pop();
-        cout << "Current NFA Set: ";
-        for (State* state : currentNFASet) {
-            cout << state->token << " ";
+        if (currentState->isFinal) {
+            finalStates.insert(currentState);
         }
-        cout << endl;
+        else {
+            normalStates.insert(currentState);
+        }
         map<char, set<State*>> transitions;
         for (State* state : currentNFASet) {
             for (auto& [input, next] : state->transitions) {
@@ -37,14 +39,10 @@ State* DFA::convertNFAtoDFA(State *startState) {
         }
         for (auto& [input, next] : transitions) {
             set<State*> nextSet = epsilonClosure(next);
-            cout << "Transition on " << input << " to: ";
-            for (State* state : nextSet) {
-                cout << state->token << " ";
-            }
-            cout << endl;
             if (!dfaStates.contains(nextSet)) {
                 needToProcess.push(nextSet);
                 dfaStates[nextSet] = new State();
+                handleTokenPriorities(dfaStates, nextSet);
             }
             currentState->addTransition(input, dfaStates[nextSet]);
         }
@@ -64,8 +62,7 @@ set<State* > DFA::epsilonClosure(const set<State* >& states) {
         stack.pop();
 
         if (state->transitions.contains(epsilon)) {
-            vector<State* > nextStates = state->transitions[epsilon];
-            for (State* nextState : nextStates) {
+            for (vector<State* > nextStates = state->transitions[epsilon]; State* nextState : nextStates) {
                 if (!closure.contains(nextState)) {
                     closure.insert(nextState);
                     stack.push(nextState);
@@ -76,4 +73,17 @@ set<State* > DFA::epsilonClosure(const set<State* >& states) {
 
     return closure;
 }
-
+void DFA::handleTokenPriorities(map<set<State *>, State *>& dfaStates, const set<State *>& nextSet) {
+    for (const State* state : nextSet) {
+        if (state->isFinal) {
+            dfaStates[nextSet]->isFinal = true;
+            if (dfaStates[nextSet]->token.empty()) {
+                dfaStates[nextSet]->token = state->token;
+            }
+            // Choose the token with the highest priority
+            else if (priorities[state->token] < priorities[dfaStates[nextSet]->token]) {
+                dfaStates[nextSet]->token = state->token;
+            }
+        }
+    }
+}
