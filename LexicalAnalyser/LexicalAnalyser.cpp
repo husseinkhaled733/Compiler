@@ -72,10 +72,13 @@ Lexeme LexicalAnalyser::nextToken() {
     std::vector<char> fullBuffer;
 
     int longestMatchIndex = -1;
-    int errorBackupIndex  = 1;
+    State longestMatchState;
+
+    int errorBackupIndex  = 0;
+    bool errorOccurred = false;
+
     int startBufferIndex  = 0;
 
-    State longestMatchState;
 
     while (true) {
         file.read(buffer.data(), BUFFER_SIZE);
@@ -94,15 +97,16 @@ Lexeme LexicalAnalyser::nextToken() {
             if (nextStates.empty()) {
 
                 if (longestMatchIndex == -1) {
-                    logError(fullBuffer, errorBackupIndex, i);
-                    i = errorBackupIndex++;
+                    i = ++errorBackupIndex;
+                    errorOccurred = true;
                 } else {
                     auto longestMatchTokenValue =
-                        std::string(fullBuffer.begin(), fullBuffer.begin() + longestMatchIndex + 1);
+                        std::string(fullBuffer.begin() + errorBackupIndex,
+                                    fullBuffer.begin() + longestMatchIndex + 1);
 
                     currentLexeme = Lexeme(longestMatchState.token, longestMatchTokenValue);
                     currentIndexInSource += longestMatchIndex + 1;
-                    currentState = minimalDFAStartState;
+                    currentState = minimalDFAStartState; // reset to start state
                     return currentLexeme;
                 }
 
@@ -110,8 +114,14 @@ Lexeme LexicalAnalyser::nextToken() {
 
                 currentState = nextStates[0];
                 if (currentState->isFinal) {
+
+                    // log error on first match if error happened before it
+                    if (errorOccurred) {
+                        logError(fullBuffer, errorBackupIndex);
+                        errorOccurred = false; // reset to log error once
+                    }
+
                     longestMatchIndex = i;
-                    errorBackupIndex  = i + 2;
                     longestMatchState = *currentState;
                 }
             }
@@ -120,18 +130,22 @@ Lexeme LexicalAnalyser::nextToken() {
         startBufferIndex++;
     }
 
+    // if we had a match at the end of the file [0000001] 1 was a final state and we reached the end of the file
+    // so it won't be considered as a match unless we check after the loop
     if (longestMatchIndex != -1) {
         auto longestMatchTokenValue =
-                        std::string(fullBuffer.begin(), fullBuffer.begin() + longestMatchIndex + 1);
+                        std::string(fullBuffer.begin() + errorBackupIndex,
+                                    fullBuffer.begin() + longestMatchIndex + 1);
+
         currentLexeme = Lexeme(longestMatchState.token, longestMatchTokenValue);
         currentIndexInSource += longestMatchIndex + 1;
-        currentState = minimalDFAStartState;
+        currentState = minimalDFAStartState; // reset to start state
         return currentLexeme;
     }
 
-    logError(fullBuffer, errorBackupIndex - 1, fullBuffer.size());
-
-    return Lexeme();
+    // if we reached the end of the file and no match was found then the whole buffer is an error
+    logError(fullBuffer, static_cast<int>(fullBuffer.size()) );
+    return {};
 }
 
 bool LexicalAnalyser::hasNextToken() {
@@ -141,7 +155,6 @@ bool LexicalAnalyser::hasNextToken() {
 
 void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const std::string& outputFilePath) {
     this->sourceFilePath = sourceFilePath;
-    this->outputFilePath = outputFilePath;
 
     std::ofstream outputFile(outputFilePath);
 
@@ -162,10 +175,12 @@ void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const
     outputFile.close();
 }
 
-void LexicalAnalyser::logError(std::vector<char> fullBuffer, const int errorBackupIndex, const int i) const {
-    const std::string errorSubstring(fullBuffer.begin() + errorBackupIndex - 1, fullBuffer.begin() + i);
-    std::cerr << "Can't recognize token at index " + std::to_string(currentIndexInSource + i)
-                     + ", problematic substring: \"" + errorSubstring + "\""
+void LexicalAnalyser::logError(std::vector<char> fullBuffer, const int errorBackupIndex) const {
+    const std::string errorSubstring
+        (fullBuffer.begin(), fullBuffer.begin() + errorBackupIndex);
+
+    std::cerr << "Can't recognize token at index " + std::to_string(currentIndexInSource)
+              << ", problematic substring: \"" + errorSubstring + "\""
               << std::endl;
 }
 

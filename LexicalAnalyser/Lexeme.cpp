@@ -4,9 +4,11 @@
 
 #include "Lexeme.h"
 
+#include <utility>
+
 Lexeme::Lexeme() = default;
-Lexeme::Lexeme(const std::string& tokenType, const std::string& value)
-        : tokenType(tokenType), value(value) {}
+Lexeme::Lexeme(std::string tokenType, std::string value)
+        : tokenType(std::move(tokenType)), value(std::move(value)) {}
 
 std::string Lexeme::getTokenType() const {
     return tokenType;
