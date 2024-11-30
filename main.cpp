@@ -51,5 +51,40 @@ int main() {
     priorities["a*b+"] = 3;
     DFA dfa;
     State* dfaStartState = dfa.convertNFAtoDFA(state0);
+    unordered_set<State *> s1;
+    unordered_set<State *> s2;
+    s1.insert(state0);
+    s1.insert(state1);
+    s1.insert(state2);
+    s2.insert(state2);
+    s2.insert(state1);
+    s2.insert(state0);
+    if (s1==s2) {
+        cout << "Equal" << endl;
+    }
+    else {
+        cout << "Not Equal" << endl;
+    }
+
+    State* A= new State("A");
+    State* B= new State("B");
+    State* C= new State("C");
+    State* D= new State("D");
+    State* E= new State("E");
+    A->addTransition('0', B);
+    A->addTransition('1', C);
+    B->addTransition('1', D);
+    B->addTransition('0',B);
+    C->addTransition('0', B);
+    C->addTransition('1', C);
+    D->addTransition('1', E);
+    D->addTransition('0', B);
+    E->addTransition('0', B);
+    E->addTransition('1', C);
+    E->isFinal = true;
+    DFA dfa2;
+    State* dfaStartState2 = dfa2.convertNFAtoDFA(A);
+    dfa2.minimizeDFA(dfaStartState2);
+
     return 0;
 }

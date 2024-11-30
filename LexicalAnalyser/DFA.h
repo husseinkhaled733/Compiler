@@ -10,9 +10,11 @@ using namespace std;
 class DFA {
 public:
     State* dfaStartState;
-    set<State* > finalStates;
-    set<State* > normalStates;
+    unordered_set<State* > finalStates;
+    unordered_set<State* > normalStates;
+    unordered_set<char> possibleInputs;
     State* convertNFAtoDFA(State *startState);
+    string getStateKey(State *state, const vector<char> &inputs, const vector<unordered_set<State *>> &partitions);
     State* minimizeDFA(State *startState);
 private:
     std::set<State*> epsilonClosure(const std::set<State* >& states);
