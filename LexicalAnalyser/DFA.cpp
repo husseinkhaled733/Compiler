@@ -10,34 +10,30 @@ using namespace std;
 State* DFA::convertNFAtoDFA(State *startState) {
     map<set<State*>,State*> dfaStates;
     queue<set<State*>> needToProcess;
+    // To partition the final states based on their tokens
+    unordered_map<string,unordered_set<State* >> tokensPartitions;
     set<State*> startSet;
+    unordered_set<char> possibleInputs;
     startSet.insert(startState);
-    startSet = epsilonClosure(startSet);
+    epsilonClosure(startSet);
     needToProcess.push(startSet);
     dfaStates[startSet] = new State();
-    handleTokenPriorities(dfaStates, startSet);
-    cout<<"start set : ";
-    for (State* state : startSet) {
-        cout << state->token << " ";
-    }
-    cout << endl;
     dfaStartState = dfaStates[startSet];
+    for (const State* state : startSet) {
+        handleTokenPriorities(dfaStartState, state);
+    }
     while (!needToProcess.empty()) {
         State* currentState = dfaStates[needToProcess.front()];
         set<State*> currentNFASet = needToProcess.front();
         needToProcess.pop();
-        cout << "Current NFA Set: ";
-        for (State* state : currentNFASet) {
-            cout << state->token << " ";
-        }
-        cout << endl;
         if (currentState->isFinal) {
-            finalStates.insert(currentState);
+            tokensPartitions[currentState->token].insert(currentState);
             cout << "Final State: " << currentState->token << endl;
         }
         else {
             normalStates.insert(currentState);
         }
+        // Construct the transitions for the new states
         map<char, set<State*>> transitions;
         for (State* state : currentNFASet) {
             for (auto& [input, next] : state->transitions) {
@@ -48,29 +44,29 @@ State* DFA::convertNFAtoDFA(State *startState) {
                 }
             }
         }
+        // Epsilon closure for the new states
         for (auto& [input, next] : transitions) {
-            set<State*> nextSet = epsilonClosure(next);
-            if (!dfaStates.contains(nextSet)) {
-                needToProcess.push(nextSet);
-                dfaStates[nextSet] = new State();
-                handleTokenPriorities(dfaStates, nextSet);
+            epsilonClosure(next);
+            if (!dfaStates.contains(next)) {
+                needToProcess.push(next);
+                dfaStates[next] = new State();
+                for (const State* state : next) {
+                    handleTokenPriorities(dfaStates[next], state);
+                }
             }
-            currentState->addTransition(input, dfaStates[nextSet]);
+            currentState->addTransition(input, dfaStates[next]);
             possibleInputs.insert(input);
-            cout<<"input :"<<input<<" goes to : ";
-            for (State* state : nextSet) {
-                cout << state->token << " ";
-            }
-            cout << endl;
         }
-
     }
-
+    partitions.emplace_back(normalStates);
+    for (const auto &states: tokensPartitions | views::values) {
+        partitions.emplace_back(states);
+    }
+    inputs = vector<char>(possibleInputs.begin(), possibleInputs.end());
     return dfaStartState;
 }
 
-set<State* > DFA::epsilonClosure(const set<State* >& states) {
-    std::set<State*> closure = states;
+void DFA::epsilonClosure(set<State* >& states) {
     std::stack<State*> stack;
     for (State* state : states) {
         stack.push(state);
@@ -81,57 +77,39 @@ set<State* > DFA::epsilonClosure(const set<State* >& states) {
 
         if (state->transitions.contains(epsilon)) {
             for (vector<State* > nextStates = state->transitions[epsilon]; State* nextState : nextStates) {
-                if (!closure.contains(nextState)) {
-                    closure.insert(nextState);
+                if (!states.contains(nextState)) {
+                    states.insert(nextState);
                     stack.push(nextState);
                 }
             }
         }
     }
-
-    return closure;
 }
-void DFA::handleTokenPriorities(map<set<State *>, State *>& dfaStates, const set<State *>& nextSet) {
-    for (const State* state : nextSet) {
-        if (state->isFinal) {
-            dfaStates[nextSet]->isFinal = true;
-            if (dfaStates[nextSet]->token.empty()) {
-                dfaStates[nextSet]->token = state->token;
-            }
-            // Choose the token with the highest priority
-            else if (priorities[state->token] < priorities[dfaStates[nextSet]->token]) {
-                dfaStates[nextSet]->token = state->token;
-            }
+void DFA::handleTokenPriorities(State* newState, const State* currentState) {
+    if (currentState->isFinal) {
+        newState->isFinal = true;
+        if (newState->token.empty() || priorities[currentState->token] < priorities[newState->token]) {
+            newState->token = currentState->token;
         }
     }
 }
 
 State* DFA::minimizeDFA(State *startState) {
-    const vector<char> inputs(possibleInputs.begin(), possibleInputs.end());
-    vector<unordered_set<State*>> partitions = {finalStates, normalStates};
     vector<unordered_set<State*>> newPartitions;
-    int i=0;
     bool changed=true;
+    // Keep partitioning until no more changes
     while (changed) {
-        cout<<"iteration no. "<<i++<<endl;
         changed=false;
         newPartitions.clear();
         for (auto& group : partitions) {
-            cout << "Group: ";
-            for (auto state:group) {
-                cout << state->token << " ";
-            }
-            cout << endl;
             if (group.size() == 1) {
                 newPartitions.push_back(group);
                 continue;
             }
             unordered_map<string,unordered_set<State*>> newGroups;
             for (auto& state : group) {
-                cout << "State: " << state->token << endl;
                 string stateKey = getStateKey(state, inputs, partitions);
                 newGroups[stateKey].insert(state);
-                cout << "State Key: " << stateKey << endl;
             }
             for (const auto &newGroup: newGroups | views::values) {
                 newPartitions.push_back(newGroup);
@@ -142,14 +120,32 @@ State* DFA::minimizeDFA(State *startState) {
         }
         partitions = newPartitions;
     }
+    // Reconstruction of the minimized DFA
+    unordered_map<State* , State*> newStates;
+    vector<State* > minimizedStates;
     for (const auto& partition:partitions) {
-        cout << "Partition: ";
+        auto* newState = new State();
+        const auto* representative = *partition.begin();
+        newState->transitions = representative->transitions;
         for (const auto state:partition) {
-            cout << state->token << " ";
+            newStates[state] = newState;
+            handleTokenPriorities(newState, state);
         }
-        cout << endl;
+        minimizedStates.push_back(newState);
     }
-    return nullptr;
+    // Modify the transitions to point to the new states
+    for (const auto& state: minimizedStates) {
+        for (auto& [input, next] : state->transitions) {
+            if (next.empty()) {
+                continue;
+            }
+            State* nextState = newStates[*next.begin()];
+            state->transitions[input] = {nextState};
+        }
+    }
+    minimizedDFAStartState = newStates[startState];
+    return minimizedDFAStartState;
+
 }
 
 string DFA::getStateKey(State *state, const vector<char> &inputs, const vector<unordered_set<State *>> &partitions) {
@@ -169,4 +165,49 @@ string DFA::getStateKey(State *state, const vector<char> &inputs, const vector<u
         }
     }
     return stateKey;
+}
+
+void DFA::printDFA() const {
+    cout << "DFA: " << endl;
+    traverse(dfaStartState);
+    cout <<"End of DFA" << endl;
+}
+
+void DFA::printMinimizedDFA() const {
+    cout << "Minimized DFA: " << endl;
+    traverse(minimizedDFAStartState);
+    cout <<"End of Minimized DFA" << endl;
+}
+
+void DFA::traverse(State *state) {
+    // DFS traversal
+    stack<State* > stack;
+    unordered_set<State*> visited;
+    stack.push(state);
+    visited.insert(state);
+    while (!stack.empty()) {
+        State* currentState = stack.top();
+        stack.pop();
+        cout << "State: " << currentState->token << endl;
+        for (auto& [input, next] : currentState->transitions) {
+            cout << "Input: " << input;
+            if (next.empty()) {
+                cout << " Next: " << "None" << endl;
+                continue;
+            }
+            if (next[0]->isFinal) {
+                cout << " Next is Final with token: " << next[0]->token << endl;
+            }
+            else {
+                cout << " Next: " << next[0]->token << endl;
+            }
+            for (State* nextState : next) {
+                if (visited.contains(nextState)) {
+                    continue;
+                }
+                stack.push(nextState);
+                visited.insert(nextState);
+            }
+        }
+    }
 }

@@ -10,14 +10,19 @@ using namespace std;
 class DFA {
 public:
     State* dfaStartState;
-    unordered_set<State* > finalStates;
+    State* minimizedDFAStartState;
     unordered_set<State* > normalStates;
-    unordered_set<char> possibleInputs;
+    // To use in minimizeDFA
+    vector<unordered_set<State*>> partitions;
+    vector<char> inputs;
     State* convertNFAtoDFA(State *startState);
-    string getStateKey(State *state, const vector<char> &inputs, const vector<unordered_set<State *>> &partitions);
+    static string getStateKey(State *state, const vector<char> &inputs, const vector<unordered_set<State *>> &partitions);
     State* minimizeDFA(State *startState);
+    void printDFA() const;
+    void printMinimizedDFA() const;
 private:
-    std::set<State*> epsilonClosure(const std::set<State* >& states);
-    void handleTokenPriorities(map<set<State *>, State *> &dfaStates, const set<State *> &nextSet);
+    static void epsilonClosure(set<State *> &states);
+    static void handleTokenPriorities(State *newState, const State *currentState);
+    static void traverse(State* state);
 };
 #endif //DFA_H
