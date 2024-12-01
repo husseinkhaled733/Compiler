@@ -171,13 +171,21 @@ string DFA::getStateKey(State *state, const vector<char> &inputs, const vector<u
 }
 
 void DFA::printDFA() const {
-    cout << "DFA: " << endl;
+    cout << "===================================" << endl;
+    cout << "              DFA STATES            " << endl;
+    cout << "===================================" << endl;
     traverse(dfaStartState);
-    cout <<"End of DFA" << endl;
+    cout << "===================================" << endl;
+    cout << "         END OF DFA STATES          " << endl;
+    cout << "===================================" << endl;
 }
 
 void DFA::printMinimizedDFA() const {
-    cout << "Minimized DFA: " << endl;
+    cout << "===================================" << endl;
+    cout << "         MINIMIZED DFA STATES       " << endl;
+    cout << "===================================" << endl;
     traverse(minimizedDFAStartState);
-    cout <<"End of Minimized DFA" << endl;
+    cout << "===================================" << endl;
+    cout << "    END OF MINIMIZED DFA STATES     " << endl;
+    cout << "===================================" << endl;
 }
