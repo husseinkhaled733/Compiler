@@ -13,6 +13,7 @@ class State
         State();
         explicit State(const std::string& token);
 
+        std::string id;
         std::string token;
         bool isFinal = false;
         std::unordered_map<char, std::vector<State*>> transitions;

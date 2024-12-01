@@ -6,23 +6,23 @@
 
 int main() {
     State* state0 = new State();
-    // state0->token = "0";
+    state0->id = "0";
     State* state1 = new State();
-    // state1->token = "1";
+    state1->id = "1";
     State* state2 = new State();
-    // state2->token = "2";
+    state2->id = "2";
     State* state3 = new State();
-    // state3->token = "3";
+    state3->id = "3";
     State* state4 = new State();
-    // state4->token = "4";
+    state4->id = "4";
     State* state5 = new State();
-    // state5->token = "5";
+    state5->id = "5";
     State* state6 = new State();
-    // state6->token = "6";
+    state6->id = "6";
     State* state7 = new State();
-    // state7->token = "7";
+    state7->id = "7";
     State* state8 = new State();
-    // state8->token = "8";
+    state8->id = "8";
     state0->addTransition(epsilon, state1);
     state0->addTransition(epsilon, state7);
     state0->addTransition(epsilon, state3);

@@ -21,6 +21,7 @@ State* DFA::convertNFAtoDFA(State *startState) {
     dfaStartState = dfaStates[startSet];
     for (const State* state : startSet) {
         handleTokenPriorities(dfaStartState, state);
+        dfaStartState->id += state->id;
     }
     while (!needToProcess.empty()) {
         State* currentState = dfaStates[needToProcess.front()];
@@ -51,6 +52,7 @@ State* DFA::convertNFAtoDFA(State *startState) {
                 needToProcess.push(next);
                 dfaStates[next] = new State();
                 for (const State* state : next) {
+                    dfaStates[next]->id += state->id;
                     handleTokenPriorities(dfaStates[next], state);
                 }
             }
@@ -128,6 +130,7 @@ State* DFA::minimizeDFA(State *startState) {
         const auto* representative = *partition.begin();
         newState->transitions = representative->transitions;
         for (const auto state:partition) {
+            newState->id += state->id;
             newStates[state] = newState;
             handleTokenPriorities(newState, state);
         }
@@ -188,19 +191,17 @@ void DFA::traverse(State *state) {
     while (!stack.empty()) {
         State* currentState = stack.top();
         stack.pop();
-        cout << "State: " << currentState->token << endl;
+        cout << "State: " << currentState->id << endl;
+        if (currentState->isFinal) {
+            cout<<"Final State with token: " << currentState->token << endl;
+        }
         for (auto& [input, next] : currentState->transitions) {
             cout << "Input: " << input;
             if (next.empty()) {
                 cout << " Next: " << "None" << endl;
                 continue;
             }
-            if (next[0]->isFinal) {
-                cout << " Next is Final with token: " << next[0]->token << endl;
-            }
-            else {
-                cout << " Next: " << next[0]->token << endl;
-            }
+            cout << " Next: " << next[0]->id << endl;
             for (State* nextState : next) {
                 if (visited.contains(nextState)) {
                     continue;
