@@ -48,7 +48,7 @@ void Utilities::trim(std::string& s) {
     s.erase(0, s.find_first_not_of(blanks));
 }
 
-std::string charToString(const char c) {
+std::string Utilities::charToString(const char c) {
     return std::string(1, c);
 }
 
