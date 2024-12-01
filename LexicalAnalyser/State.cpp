@@ -5,11 +5,16 @@
 #include "State.h"
 #include <utility>
 
-State::State() = default;
+State::State(int id)
+{
+    this->id = id;
+    this->isFinal = false;
+}
 
-State::State(const std::string& token)
+State::State(const std::string& token, int id)
 {
     this->token = token;
+    this->id = id;
     this->isFinal = true;
 }
 

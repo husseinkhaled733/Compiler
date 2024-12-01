@@ -3,3 +3,7 @@
 //
 
 #include "Node.h"
+
+bool Node::isLeaf() const {
+    return this->left == nullptr && this->right == nullptr;
+}

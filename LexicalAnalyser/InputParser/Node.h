@@ -6,12 +6,13 @@
 #define NODE_H
 
 class Node {
-    public:
-        char value;
-        Node* left;
-        Node* right;
+public:
+    char value;
+    Node* left;
+    Node* right;
+
+    [[nodiscard]] bool isLeaf() const;
 };
 
 
-
-#endif //NODE_H
+#endif // NODE_H
