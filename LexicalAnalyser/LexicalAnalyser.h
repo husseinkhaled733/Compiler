@@ -25,7 +25,7 @@ class LexicalAnalyser {
 
 public:
 
-    explicit LexicalAnalyser(const SymbolTableHandler& symbolTableHandler);
+    explicit LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, State* startState);
 
     Lexeme nextToken();
     bool hasNextToken();
