@@ -14,10 +14,10 @@ private:
 
 public:
     Lexeme();
-    explicit Lexeme(const std::string& tokenType, const std::string& value);
+    explicit Lexeme(std::string tokenType, std::string value);
 
-    std::string getTokenType() const;
-    std::string getValue() const;
+    [[nodiscard]] std::string getTokenType() const;
+    [[nodiscard]] std::string getValue() const;
 };
 
 

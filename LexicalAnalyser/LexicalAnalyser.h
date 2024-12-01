@@ -15,7 +15,7 @@ class LexicalAnalyser {
 
     SymbolTableHandler symbolTableHandler;
 
-    std::string sourceFilePath, outputFilePath;
+    std::string sourceFilePath;
 
     State *currentState, *minimalDFAStartState;
     long long currentIndexInSource;
@@ -30,7 +30,7 @@ public:
     Lexeme nextToken();
     bool hasNextToken();
     void tokenizeInputFile(const std::string& sourceFilePath, const std::string& outputFilePath);
-    void logError(std::vector<char> fullBuffer, int errorBackupIndex, int i) const;
+    void logError(std::vector<char> fullBuffer, int errorBackupIndex) const;
     void reset();
 
     static State* getExampleDFA(); // will be removed
