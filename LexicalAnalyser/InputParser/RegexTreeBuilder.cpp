@@ -9,7 +9,6 @@
 #include "RegularDefinitionHandler.h"
 #include "RegularExpressionHandler.h"
 #include "RegexTreeBuilder.h"
-#include "RulesHandler.h"
 
 RegexTreeBuilder::RegexTreeBuilder(const std::string& filePath)
 {
@@ -22,30 +21,25 @@ RegexTreeBuilder::RegexTreeBuilder(const std::string& filePath)
     RegularDefinitionHandler regularDefinitionHandler;
     RegularExpressionHandler regularExpressionHandler;
     KeywordsAndPunctuationsHandler keywordsAndPunctuationsHandler;
-
-    keywordsAndPunctuationsHandler.setNext(&regularDefinitionHandler);
-    regularDefinitionHandler.setNext(&regularExpressionHandler);
-
     std::string rule;
     while(std::getline(file, rule))
     {
-        Utilities::strip(rule);
-        keywordsAndPunctuationsHandler.handleRequest(rule, *this);
+        utilities.trim(rule);
+
+        if (regularDefinitionHandler.checkRule(rule))
+        {
+            regularDefinitionHandler.handleRule(rule, *this);
+        }
+
+        else if (regularExpressionHandler.checkRule(rule))
+        {
+            regularExpressionHandler.handleRule(rule, *this);
+        }
+        else if (keywordsAndPunctuationsHandler.checkRule(rule))
+        {
+            keywordsAndPunctuationsHandler.handleRule(rule, *this);
+        }
+        else
+          throw std::invalid_argument(rule + " rule is invalid");
     }
 }
-
-std::unordered_map<std::string, int> RegexTreeBuilder::getTokenPriorities()
-{
-    return this->tokensPriorities;
-}
-
-std::set<std::string> RegexTreeBuilder::getKeywords()
-{
-    return this->keywords;
-}
-
-std::unordered_map<std::string, Node*> RegexTreeBuilder::getTokens()
-{
-    return this->tokens;
-}
-

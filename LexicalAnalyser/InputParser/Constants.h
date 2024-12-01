@@ -13,6 +13,11 @@ namespace RegexOperations {
     constexpr char ALTERNATION = '|';
 }
 
+namespace lexicalRules {
+    constexpr char REGULAR_DEFINITION = '=';
+    constexpr char REGULAR_EXPRESSION = ':';
+}
+
 
 
 #endif //CONSTANTS_H
