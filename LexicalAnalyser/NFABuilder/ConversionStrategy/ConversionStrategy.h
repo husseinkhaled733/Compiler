@@ -16,6 +16,7 @@ protected:
                          State* rightStartState, State* rightEndState);
 
     void convertChild(Node* node, State* startState, State* endState);
+
 public:
     virtual ~ConversionStrategy()                                              = default;
     virtual void convert(Node* node, State* startState, State* endState) = 0;

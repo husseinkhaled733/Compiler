@@ -19,14 +19,17 @@ public:
         Node* left  = node->left;
         Node* right = node->right;
 
-        State* currentState = startState;
-        for (int enumeration = left->value; enumeration < right->value; ++enumeration) {
-            State* nextState = new State(StateIdManager::getInstance().getNextId());
-            currentState->addTransition(enumeration, nextState);
-            currentState = nextState;
-        }
+        // for (char i = left->value; i <= right->value; i++)
+        //     startState->addTransition(i, endState);
 
-        currentState->addTransition(right->value, endState);
+        for (char i = left->value; i <= right->value; i++) {
+            State* leftState  = new State(StateIdManager::getInstance().getNextId());
+            State* rightState = new State(StateIdManager::getInstance().getNextId());
+            leftState->addTransition(i, rightState);
+
+            startState->addTransition(epsilon, leftState);
+            rightState->addTransition(epsilon, endState);
+        }
     }
 };
 

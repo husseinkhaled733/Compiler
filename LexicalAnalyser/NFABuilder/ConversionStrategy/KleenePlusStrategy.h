@@ -14,8 +14,6 @@ public:
         State* middleState = new State(StateIdManager::getInstance().getNextId());
         State* rightState = new State(StateIdManager::getInstance().getNextId());
 
-        startState->addTransition(epsilon, leftState);
-
         leftState->addTransition(epsilon, middleState);
         leftState->addTransition(epsilon, endState);
 

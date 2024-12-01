@@ -12,7 +12,7 @@
 
 class NFABuilder {
     std::unordered_map<std::string, Node*> tokens;
-    State* buildTokenNFA(Node* root);
+    State* buildTokenNFA(std::string token, Node* root);
 public:
     explicit NFABuilder(const std::unordered_map<std::string, Node*>& tokens);
     State* buildNFA();

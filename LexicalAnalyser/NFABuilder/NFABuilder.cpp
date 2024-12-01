@@ -11,20 +11,21 @@ NFABuilder::NFABuilder(const std::unordered_map<std::string, Node*>& tokens) : t
 
 State* NFABuilder::buildNFA() {
     State* combinedNFA = new State(StateIdManager::getInstance().getNextId());
-    for (const auto& regexTreeRoot : this->tokens | std::views::values) {
-        State* tokenNFA = buildTokenNFA(regexTreeRoot);
+    for (const auto& [token , regexTreeRoot] : this->tokens) {
+        State* tokenNFA = buildTokenNFA(token, regexTreeRoot);
         combinedNFA->addTransition(epsilon, tokenNFA);
     }
     return combinedNFA;
 }
 
-State* NFABuilder::buildTokenNFA(Node* root) {
+State* NFABuilder::buildTokenNFA(std::string token, Node* root) {
     if (!root) {
         throw std::invalid_argument("Node is null");
     }
 
     State* startState = new State(StateIdManager::getInstance().getNextId());
-    State* endState   = new State(StateIdManager::getInstance().getNextId());
+    State* endState   = new State(token, StateIdManager::getInstance().getNextId());
+    endState->isFinal = true;
 
     ConversionStrategyFactory::getInstance()
         .getStrategy(root->value, root->isLeaf())
