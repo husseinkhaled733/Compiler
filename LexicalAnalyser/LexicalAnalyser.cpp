@@ -74,11 +74,10 @@ Lexeme LexicalAnalyser::nextToken() {
     int longestMatchIndex = -1;
     State longestMatchState;
 
-    int errorBackupIndex  = 0;
-    bool errorOccurred = false;
+    int errorBackupIndex = 0;
+    bool errorOccurred   = false;
 
-    int startBufferIndex  = 0;
-
+    int startBufferIndex = 0;
 
     while (true) {
         file.read(buffer.data(), BUFFER_SIZE);
@@ -97,12 +96,11 @@ Lexeme LexicalAnalyser::nextToken() {
             if (nextStates.empty()) {
 
                 if (longestMatchIndex == -1) {
-                    i = ++errorBackupIndex;
+                    i             = ++errorBackupIndex;
                     errorOccurred = true;
                 } else {
                     auto longestMatchTokenValue =
-                        std::string(fullBuffer.begin() + errorBackupIndex,
-                                    fullBuffer.begin() + longestMatchIndex + 1);
+                        std::string(fullBuffer.begin() + errorBackupIndex, fullBuffer.begin() + longestMatchIndex + 1);
 
                     currentLexeme = Lexeme(longestMatchState.token, longestMatchTokenValue);
                     currentIndexInSource += longestMatchIndex + 1;
@@ -134,8 +132,7 @@ Lexeme LexicalAnalyser::nextToken() {
     // so it won't be considered as a match unless we check after the loop
     if (longestMatchIndex != -1) {
         auto longestMatchTokenValue =
-                        std::string(fullBuffer.begin() + errorBackupIndex,
-                                    fullBuffer.begin() + longestMatchIndex + 1);
+            std::string(fullBuffer.begin() + errorBackupIndex, fullBuffer.begin() + longestMatchIndex + 1);
 
         currentLexeme = Lexeme(longestMatchState.token, longestMatchTokenValue);
         currentIndexInSource += longestMatchIndex + 1;
@@ -144,7 +141,9 @@ Lexeme LexicalAnalyser::nextToken() {
     }
 
     // if we reached the end of the file and no match was found then the whole buffer is an error
-    logError(fullBuffer, static_cast<int>(fullBuffer.size()) );
+    if (!fullBuffer.empty()) {
+        logError(fullBuffer, static_cast<int>(fullBuffer.size()));
+    }
     return {};
 }
 
@@ -176,12 +175,10 @@ void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const
 }
 
 void LexicalAnalyser::logError(std::vector<char> fullBuffer, const int errorBackupIndex) const {
-    const std::string errorSubstring
-        (fullBuffer.begin(), fullBuffer.begin() + errorBackupIndex);
+    const std::string errorSubstring(fullBuffer.begin(), fullBuffer.begin() + errorBackupIndex);
 
     std::cerr << "Can't recognize token at index " + std::to_string(currentIndexInSource)
-              << ", problematic substring: \"" + errorSubstring + "\""
-              << std::endl;
+              << ", problematic substring: \"" + errorSubstring + "\"" << std::endl;
 }
 
 void LexicalAnalyser::reset() {
