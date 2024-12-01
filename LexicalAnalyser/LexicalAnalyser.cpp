@@ -4,6 +4,8 @@
 
 #include "LexicalAnalyser.h"
 
+#include "InputParser/Constants.h"
+
 LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, State* startState) {
     minimalDFAStartState = startState;
 
@@ -55,7 +57,7 @@ State* LexicalAnalyser::getExampleDFA() {
 
 Lexeme LexicalAnalyser::nextToken() {
 
-    if (!currentLexeme.getValue().empty()) {
+    if (!currentLexeme.getValue().empty() and currentLexeme.getTokenType() != DELIMITER) {
         auto token    = currentLexeme;
         currentLexeme = Lexeme();
         return token;
