@@ -22,4 +22,5 @@ add_executable(Compiler
         LexicalAnalyser/InputParser/RulesHandler.h
         LexicalAnalyser/InputParser/RegexTreeBuilder.cpp
         LexicalAnalyser/InputParser/Constants.h
+        LexicalAnalyser/Utils.cpp
 )

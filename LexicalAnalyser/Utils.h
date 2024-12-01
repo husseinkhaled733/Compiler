@@ -9,5 +9,6 @@
 
 inline std::unordered_map<std::string, int> priorities;
 inline char epsilon = '\0';
+void traverse(State* startState);
 
 #endif //UTILS_H

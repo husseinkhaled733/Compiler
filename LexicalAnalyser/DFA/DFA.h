@@ -23,6 +23,5 @@ public:
 private:
     static void epsilonClosure(set<State *> &states);
     static void handleTokenPriorities(State *newState, const State *currentState);
-    static void traverse(State* state);
 };
 #endif //DFA_H
