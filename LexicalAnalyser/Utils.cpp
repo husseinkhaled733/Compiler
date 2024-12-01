@@ -9,31 +9,36 @@ using namespace std;
 
 void traverse(State* startState) {
     // DFS traversal
-    stack<State* > stack;
+    stack<State*> stack;
     unordered_set<State*> visited;
     stack.push(startState);
     visited.insert(startState);
+
     while (!stack.empty()) {
         State* currentState = stack.top();
         stack.pop();
-        cout << "State: " << currentState->id << endl;
+
+        // Print the state details
+        cout << "State " << currentState->id;
         if (currentState->isFinal) {
-            cout<<"Final State with token: " << currentState->token << endl;
+            cout << " (Final, Token: " << currentState->token << ")";
         }
+        cout << ":\n";
+
+        // Print the transitions
         for (auto& [input, next] : currentState->transitions) {
-            cout << "Input: " << input;
-            if (next.empty()) {
-                cout << " Next: " << "None" << endl;
-                continue;
-            }
-            cout << " Next: " << next[0]->id << endl;
-            for (State* nextState : next) {
-                if (visited.contains(nextState)) {
-                    continue;
+            if (!next.empty()) {
+                for (State* nextState : next) {
+                    cout << "  --[" << input << "]--> State " << nextState->id << "\n";
+                    if (!visited.contains(nextState)) {
+                        stack.push(nextState);
+                        visited.insert(nextState);
+                    }
                 }
-                stack.push(nextState);
-                visited.insert(nextState);
+            } else {
+                cout << "  --[" << input << "]--> None\n";
             }
         }
+        cout << "\n"; // Add spacing between states for better readability
     }
 }

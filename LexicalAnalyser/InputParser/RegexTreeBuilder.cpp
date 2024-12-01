@@ -42,4 +42,5 @@ RegexTreeBuilder::RegexTreeBuilder(const std::string& filePath)
         else
           throw std::invalid_argument(rule + " rule is invalid");
     }
+    tokens[DELIMITER] = treeParsingUtilities.processString(" \t\n\r", RegexOperations::ALTERNATION);
 }
