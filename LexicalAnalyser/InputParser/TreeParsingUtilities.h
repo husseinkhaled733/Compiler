@@ -31,7 +31,7 @@ public:
         std::stack<char>& operatorsStack
     );
 
-    Node* processString(const std::string& s) const;
+    Node* processString(const std::string& s, char op) const;
 
     void printPostfix(Node* root);
 

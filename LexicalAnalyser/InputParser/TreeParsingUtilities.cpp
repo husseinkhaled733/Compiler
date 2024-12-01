@@ -137,7 +137,7 @@ Node* TreeParsingUtilities::parseTree(std::vector<std::string> tokens, std::unor
             {
                 operandsStack.push(regularExpressions[token]); continue;
             }
-            Node* root = processString(token);
+            Node* root = processString(token, RegexOperations::CONCATENATION);
             operandsStack.push(root);
         }
         else if (operatorsPrecedence[token] > 0)
@@ -197,7 +197,7 @@ Node* TreeParsingUtilities::processOperator(std::stack<Node*>& operandsStack, st
     return currentNode;
 }
 
-Node* TreeParsingUtilities::processString(const std::string& s) const
+Node* TreeParsingUtilities::processString(const std::string& s, char op) const
 {
     Node* root = nullptr;
     for (int j = 0; j<s.length(); j++)
@@ -211,7 +211,7 @@ Node* TreeParsingUtilities::processString(const std::string& s) const
         }
         else
         {
-            const auto operatorNode = new Node(RegexOperations::CONCATENATION);
+            const auto operatorNode = new Node(op);
             operatorNode->left = root;
             operatorNode->right = new Node(c);
             root = operatorNode;

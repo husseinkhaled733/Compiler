@@ -7,6 +7,8 @@
 #include "TreeParsingUtilities.h"
 #include <regex>
 
+#include "Constants.h"
+
 class KeywordsAndPunctuationsHandler final : public RulesHandler
 {
     TreeParsingUtilities treeParsingUtilities;
@@ -19,7 +21,7 @@ class KeywordsAndPunctuationsHandler final : public RulesHandler
             {
                 std::string LHS = token;
                 utilities.removeOccurrences(LHS, '\\');
-                builder.tokens[LHS] = treeParsingUtilities.processString(token);
+                builder.tokens[LHS] = treeParsingUtilities.processString(token, RegexOperations::CONCATENATION);
                 builder.tokensPriorities[token] = 0;
             }
         }
