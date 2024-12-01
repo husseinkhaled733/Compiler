@@ -42,11 +42,17 @@ public:
         operatorsPrecedence["|"] = 4;
 
         const std::vector<std::string> tokens = splitByDelimiter(rule, ':', 2);
-        const std::string& RHS = tokens[1];
+        std::string LHS = tokens.at(0);
+        std::string RHS = tokens.at(1);
         std::vector<std::string> RHSTokens = tokenize(RHS, rule);
         // printTree(parseTree(RHSTokens), 0);
-        inorderTraversal(parseTree(RHSTokens));printLevelByLevel(parseTree(RHSTokens));
-        printPostfix(parseTree(RHSTokens));
+        trim(LHS);
+        builder.regexDefinitions[LHS] = parseTree(RHSTokens, builder.regexDefinitions);
+        std::cout<<"debugging: "<<LHS<<std::endl;
+
+        // std::cout<<builder.regexDefinitions[LHS]->value;
+        // inorderTraversal(builder.regexDefinitions[LHS]);printLevelByLevel(builder.regexDefinitions[LHS]);
+        printPostfix(builder.regexDefinitions[LHS]);
 
     }
 
@@ -81,6 +87,7 @@ public:
                     RHSTokens.emplace_back(" ");
                 }
                 else if (reservedLexicalChars.contains(nextChar)) {
+                    currToken += '\\';
                     currToken += nextChar;
                 }
                 else {
@@ -108,11 +115,12 @@ public:
         }
 
         std::cout << RHSTokens[0].length() << std::endl;
-        // Adding the concatenation operator
+        // Adding the concatenation operator in case of:
+        // str or unary operator followed by (str or '(' )
+        // ')' followed by str
         for (int i = 0; i < RHSTokens.size() - 1; i++) {
-            if (!operatorsPrecedence.contains(RHSTokens[i]) && RHSTokens[i]!="(" && !operatorsPrecedence.contains(RHSTokens[i + 1])
-                || (RHSTokens[i] == "*" || RHSTokens[i] == "+") && (RHSTokens[i + 1] == "(" || !operatorsPrecedence.contains(RHSTokens[i + 1]))
-                || !operatorsPrecedence.contains(RHSTokens[i]) && RHSTokens[i + 1] == "("
+            if ((!operatorsPrecedence.contains(RHSTokens[i]) && RHSTokens[i]!="(" || (RHSTokens[i] == "*" || RHSTokens[i] == "+"))
+                && (RHSTokens[i + 1] == "(" || !operatorsPrecedence.contains(RHSTokens[i + 1]))
                 || RHSTokens[i] == ")" && !operatorsPrecedence.contains(RHSTokens[i + 1])) {
 
                 RHSTokens.insert(RHSTokens.begin() + i + 1, ".");
@@ -129,23 +137,35 @@ public:
         return RHSTokens;
     }
 
-    Node* parseTree(std::vector<std::string> tokens)
+    Node* parseTree(std::vector<std::string> tokens, std::unordered_map<std::string, Node*>& regularDefinitions, std::unordered_map<std::string, Node*>& regularExpressions)
     {
+
         std::stack<Node*> operandsStack;
         std::stack<char> operatorsStack;
-        Node* currentNode, leftNode, rightNode;
+        Node* currentNode;
 
-        for (size_t i = 0; i < tokens.size(); ++i)
+        for (auto & token : tokens)
         {
-            if (tokens[i] == "(")
+            if (token == "(")
             {
-                operatorsStack.push(tokens[i].at(0));
+                operatorsStack.push(token.at(0));
             }
-            else if (!operatorsPrecedence.contains(tokens[i]))
+            else if (!operatorsPrecedence.contains(token))
             {
-                Node* root = nullptr;
-                for (const char c: tokens[i])
+                if (regularDefinitions[token]!=nullptr)
                 {
+                    operandsStack.push(regularDefinitions[token]); continue;
+                }
+                if (regularExpressions[token]!=nullptr)
+                {
+                    operandsStack.push(regularExpressions[token]); continue;
+                }
+                Node* root = nullptr;
+                for (int j = 0; j<token.length(); ++j)
+                {
+                    const char c = token.at(j);
+                    // handle escapes
+                    if (c=='\\' && j+1 < token.length() && reservedLexicalChars.contains(token.at(j+1))) continue;
                     if (!root)
                     {
                         root = new Node(c);
@@ -157,17 +177,14 @@ public:
                         operatorNode->right = new Node(c);
                         root = operatorNode;
                     }
-
                 }
-                // if (i+1 <tokens.size() && (tokens[i+1] == "(" || !operatorsPrecedence.contains(tokens[i+1]))) operatorsStack.push('.');
                 operandsStack.push(root);
             }
-            else if (operatorsPrecedence[tokens[i]] > 0)
+            else if (operatorsPrecedence[token] > 0)
             {
                 while (!operatorsStack.empty() && operatorsStack.top()!='('
-                    && operatorsPrecedence[std::string(1,operatorsStack.top())] < operatorsPrecedence[tokens[i]])
+                    && operatorsPrecedence[std::string(1,operatorsStack.top())] < operatorsPrecedence[token])
                 {
-                    std::cout<<"inside"<<std::endl;
                     currentNode = new Node(operatorsStack.top());
                     operatorsStack.pop();
 
@@ -178,8 +195,6 @@ public:
                         rightNode = operandsStack.top();
                         operandsStack.pop();
                     }
-
-
                     auto leftNode = operandsStack.top();
                     operandsStack.pop();
 
@@ -188,9 +203,9 @@ public:
 
                     operandsStack.push(currentNode);
                 }
-                operatorsStack.push(tokens[i].at(0));
+                operatorsStack.push(token.at(0));
             }
-            else if (tokens[i] == ")")
+            else if (token == ")")
             {
                 while (!operatorsStack.empty() && operatorsStack.top()!='(')
                 {
@@ -205,16 +220,10 @@ public:
                     operandsStack.push(currentNode);
 
                 }
+                if (operatorsStack.empty()) throw std::invalid_argument("unmatched closed paranthesis");
                 operatorsStack.pop();
             }
-
-
-
-
         }
-        std::cout<<"size"<<std::endl;
-        std::cout << operatorsStack.size() << std::endl;
-        std::cout << operandsStack.size() << std::endl;
         // Process remaining operators
         while (!operatorsStack.empty())
         {
@@ -223,9 +232,8 @@ public:
                 throw std::invalid_argument("Unmatched opening parenthesis.");
             }
 
-            Node* currentNode = new Node(operatorsStack.top());
+            currentNode = new Node(operatorsStack.top());
             operatorsStack.pop();
-
 
             Node* rightNode = nullptr;
             if (currentNode->value!='*' && currentNode->value!='+')
@@ -241,9 +249,7 @@ public:
             currentNode->left = leftNode;
             operandsStack.push(currentNode);
         }
-
         return operandsStack.top();
-
     }
 
 
@@ -280,6 +286,13 @@ public:
             std::cout << std::endl;  // Print a newline after each level
             level++; // Increment level
         }
+    }
+
+    void trim(std::string& s)
+    {
+        const std::string& blanks = " \t\n\r";
+        s.erase(s.find_last_not_of(blanks)+1);
+        s.erase(0, s.find_first_not_of(blanks));
     }
 
     // Post-order traversal to print the postfix expression
