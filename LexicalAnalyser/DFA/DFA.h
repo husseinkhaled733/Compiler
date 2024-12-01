@@ -4,7 +4,7 @@
 
 #ifndef DFA_H
 #define DFA_H
-#include "State.h"
+#include "../State.h"
 using namespace std;
 
 class DFA {

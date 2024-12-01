@@ -3,8 +3,8 @@
 //
 
 #include "DFA.h"
-#include "State.h"
-#include "Utils.h"
+#include "../State.h"
+#include "../Utils.h"
 using namespace std;
 
 State* DFA::convertNFAtoDFA(State *startState) {

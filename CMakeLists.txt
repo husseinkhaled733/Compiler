@@ -13,6 +13,6 @@ add_executable(Compiler
         LexicalAnalyser/Lexeme.h
         LexicalAnalyser/State.cpp
         LexicalAnalyser/State.h
-        LexicalAnalyser/DFA.h
-        LexicalAnalyser/DFA.cpp
+        LexicalAnalyser/DFA/DFA.h
+        LexicalAnalyser/DFA/DFA.cpp
 )

@@ -2,16 +2,9 @@
 #include <iostream>
 
 #include "LexicalAnalyser/Utils.h"
-#include "LexicalAnalyser/DFA.h"
+#include "LexicalAnalyser/DFA/DFA.h"
 
 int main() {
-
-    // SymbolTableHandler symbolTableHandler;
-    // LexicalAnalyser lexicalAnalyser(symbolTableHandler);
-    // lexicalAnalyser.tokenizeInputFile(
-    //     "/media/mohamed_anwar/HDD/CSED/9th Semester/Compilers/Project/Compiler/io/input.txt",
-    //     "/media/mohamed_anwar/HDD/CSED/9th Semester/Compilers/Project/Compiler/io/output.txt"
-    // );
     State* state0 = new State();
     // state0->token = "0";
     State* state1 = new State();
@@ -51,6 +44,15 @@ int main() {
     priorities["a*b+"] = 3;
     DFA dfa;
     State* dfaStartState = dfa.convertNFAtoDFA(state0);
+    dfa.printDFA();
+    State* minimizedDFAState=dfa.minimizeDFA(dfaStartState);
+    dfa.printMinimizedDFA();
+    SymbolTableHandler symbolTableHandler;
+    LexicalAnalyser lexicalAnalyser(symbolTableHandler,minimizedDFAState);
+    lexicalAnalyser.tokenizeInputFile(
+        "/home/husseinkhaled/CLionProjects/Compiler/io/input.txt",
+        "/home/husseinkhaled/CLionProjects/Compiler/io/output.txt"
+    );
     // cout << "DFA: " << endl;
     // for (auto& state: dfa.normalStates) {
     //     cout << "State: " << state->token << endl;
@@ -64,7 +66,7 @@ int main() {
     //         cout << "Input: " << input << " Next: " << next[0]->token << endl;
     //     }
     // }
-    State* minimized=dfa.minimizeDFA(dfaStartState);
+    // State* minimized=dfa.minimizeDFA(dfaStartState);
     // cout << "Minimized DFA: " << endl;
     // cout << "State: " << minimized->token << endl;
     // for (auto& [input, next] : minimized->transitions) {
@@ -128,7 +130,6 @@ int main() {
     // dfa2.normalStates.insert(C);
     // dfa2.normalStates.insert(D);
     // dfa2.minimizeDFA(A);
-    dfa.printDFA();
-    dfa.printMinimizedDFA();
+    // dfa.printMinimizedDFA();
     return 0;
 }

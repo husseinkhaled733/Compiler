@@ -4,8 +4,8 @@
 
 #include "LexicalAnalyser.h"
 
-LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler) {
-    minimalDFAStartState = getExampleDFA();
+LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, State* startState) {
+    minimalDFAStartState = startState;
 
     this->symbolTableHandler   = symbolTableHandler;
     this->currentState         = minimalDFAStartState;
