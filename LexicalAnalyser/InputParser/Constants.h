@@ -24,7 +24,7 @@ namespace LexicalRules {
     constexpr char CLOSE_BRACkET = ']';
 }
 
-const std::string DELIMITER = "delimetir";
+const std::string DELIMITER = "delimiter";
 
 
 #endif //CONSTANTS_H

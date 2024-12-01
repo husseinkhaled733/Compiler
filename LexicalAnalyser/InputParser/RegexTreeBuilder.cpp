@@ -30,7 +30,6 @@ RegexTreeBuilder::RegexTreeBuilder(const std::string& filePath)
         {
             regularDefinitionHandler.handleRule(rule, *this);
         }
-
         else if (regularExpressionHandler.checkRule(rule))
         {
             regularExpressionHandler.handleRule(rule, *this);
@@ -42,5 +41,8 @@ RegexTreeBuilder::RegexTreeBuilder(const std::string& filePath)
         else
           throw std::invalid_argument(rule + " rule is invalid");
     }
-    tokens[DELIMITER] = treeParsingUtilities.processString(" \t\n\r", RegexOperations::ALTERNATION);
+    // Add delimiter token
+    const auto delimiterRoot = new Node(RegexOperations::KLEENE_STAR);
+    delimiterRoot->left = treeParsingUtilities.processString(" \t\n\r", RegexOperations::ALTERNATION);
+    tokens[DELIMITER] = delimiterRoot;
 }
