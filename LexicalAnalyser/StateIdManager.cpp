@@ -11,8 +11,8 @@ StateIdManager& StateIdManager::getInstance() {
     return instance;
 }
 
-int StateIdManager::getNextId() {
-    return currentId++;
+std::string StateIdManager::getNextId() {
+    return std::to_string(currentId++);
 }
 
 void StateIdManager::reset() {

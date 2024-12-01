@@ -10,11 +10,12 @@
 class State
 {
     public:
-        explicit State(int id);
-        explicit State(const std::string& token, int id);
+        explicit State() = default;
+        explicit State(std::string id);
+        explicit State(const std::string& token, std::string id);
 
+        std::string id;
         std::string token;
-        int id;
         bool isFinal = false;
 
         std::unordered_map<char, std::vector<State*>> transitions;

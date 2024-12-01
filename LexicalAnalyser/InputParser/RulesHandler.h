@@ -11,19 +11,12 @@
 
 class RulesHandler {
 public:
+    virtual ~RulesHandler() = default;
     RulesHandler() = default;
-    virtual ~RulesHandler();
-    void handleRequest(const std::string& rule, RegexTreeBuilder& builder);;
-    virtual bool checkRule(const std::string& rule);
-    virtual void handleRule(const std::string& rule, RegexTreeBuilder& builder);
-
-    void setNext(RulesHandler* nextHandler) {
-        next = nextHandler;
-    }
-
-protected:
-    RulesHandler* next = nullptr;
+    virtual bool checkRule(const std::string& rule) = 0;
+    virtual void handleRule(std::string& rule, RegexTreeBuilder& builder)  = 0;
 };
+
 
 
 

@@ -7,3 +7,6 @@
 bool Node::isLeaf() const {
     return this->left == nullptr && this->right == nullptr;
 }
+Node::Node(const char v) {
+    this->value = v;
+}

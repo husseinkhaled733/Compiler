@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <bits/stdc++.h>
+
 class StateIdManager {
 private:
     int currentId;
@@ -18,7 +20,7 @@ public:
     StateIdManager& operator=(const StateIdManager&) = delete;
 
     static StateIdManager& getInstance();
-    int getNextId();
+    std::string getNextId();
     void reset();
 };
 

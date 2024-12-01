@@ -3,18 +3,15 @@ project(Compiler)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Compiler
+add_executable(Compiler main.cpp
         LexicalAnalyser/InputParser/Node.cpp
         LexicalAnalyser/InputParser/RegexTreeBuilder.cpp
-        LexicalAnalyser/InputParser/RulesHandler.cpp
         LexicalAnalyser/InputParser/Utilities.cpp
         LexicalAnalyser/NFABuilder/ConversionStrategy/ConversionStrategy.cpp
         LexicalAnalyser/NFABuilder/ConversionStrategy/ConversionStrategyFactory.cpp
         LexicalAnalyser/NFABuilder/NFABuilder.cpp
         LexicalAnalyser/State.cpp
         LexicalAnalyser/StateIdManager.cpp
-        main.cpp
-
         LexicalAnalyser/InputParser/Constants.h
         LexicalAnalyser/InputParser/KeywordsAndPunctuationsHandler.h
         LexicalAnalyser/InputParser/Node.h
@@ -35,4 +32,15 @@ add_executable(Compiler
         LexicalAnalyser/State.h
         LexicalAnalyser/StateIdManager.h
         LexicalAnalyser/Utils.h
+        LexicalAnalyser/Utils.cpp
+        LexicalAnalyser/DFA/DFA.h
+        LexicalAnalyser/DFA/DFA.cpp
+        LexicalAnalyser/Lexeme.cpp
+        LexicalAnalyser/Lexeme.h
+        LexicalAnalyser/LexicalAnalyser.cpp
+        LexicalAnalyser/LexicalAnalyser.h
+        LexicalAnalyser/SymbolTableHandler.cpp
+        LexicalAnalyser/SymbolTableHandler.h
+        LexicalAnalyser/InputParser/TreeParsingUtilities.cpp
+        LexicalAnalyser/InputParser/TreeParsingUtilities.h
 )
