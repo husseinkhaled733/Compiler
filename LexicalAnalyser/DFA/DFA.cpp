@@ -12,6 +12,7 @@ State* DFA::convertNFAtoDFA(State *startState) {
     queue<set<State*>> needToProcess;
     // To partition the final states based on their tokens
     unordered_map<string,unordered_set<State* >> tokensPartitions;
+    unordered_set<State* > normalStates;
     set<State*> startSet;
     unordered_set<char> possibleInputs;
     startSet.insert(startState);
