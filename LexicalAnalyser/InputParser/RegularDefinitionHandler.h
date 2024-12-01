@@ -34,7 +34,7 @@ public:
 
     bool checkRule(const std::string& rule) override
     {
-        const std::regex definitionRgx(R"([\s]*[a-zA-z]*[\s]*:[\s|a-zA-z0-9|\-|\+|\*|\(|\)|\||\=|\<|>|\!\.|\/]*)");
+        const std::regex definitionRgx(R"([\s]*[a-zA-z0-9]*[\s]*:[\s|a-zA-z0-9|\-|\+|\*|\(|\)|\||\=|\<|>|\!\.|\/]*)");
         return regex_match(rule, definitionRgx);
     }
 };

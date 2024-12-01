@@ -30,7 +30,6 @@ RegexTreeBuilder::RegexTreeBuilder(const std::string& filePath)
         {
             regularDefinitionHandler.handleRule(rule, *this);
         }
-
         else if (regularExpressionHandler.checkRule(rule))
         {
             regularExpressionHandler.handleRule(rule, *this);
