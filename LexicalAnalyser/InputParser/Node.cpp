@@ -3,3 +3,7 @@
 //
 
 #include "Node.h"
+
+Node::Node(const char v) {
+    this->value = v;
+}

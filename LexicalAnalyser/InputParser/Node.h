@@ -7,9 +7,11 @@
 
 class Node {
     public:
+        explicit Node(char v);
+        Node() = default;
         char value;
-        Node* left;
-        Node* right;
+        Node* left{};
+        Node* right{};
 };
 
 
