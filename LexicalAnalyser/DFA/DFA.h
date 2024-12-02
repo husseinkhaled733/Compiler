@@ -11,7 +11,6 @@ class DFA {
 public:
     State* dfaStartState;
     State* minimizedDFAStartState;
-    unordered_set<State* > normalStates;
     // To use in minimizeDFA
     vector<unordered_set<State*>> partitions;
     vector<char> inputs;
