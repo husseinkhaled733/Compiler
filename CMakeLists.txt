@@ -45,6 +45,3 @@ add_executable(Compiler main.cpp
         LexicalAnalyser/InputParser/TreeParsingUtilities.h
         LexicalAnalyser/DotExporter.h
 )
-
-find_package(nlohmann_json REQUIRED)
-target_link_libraries(Compiler nlohmann_json::nlohmann_json)
