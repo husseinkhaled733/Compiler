@@ -29,7 +29,7 @@ public:
         builder.tokens[LHS] = treeParsingUtilities.parseTree(RHSTokens, builder.regexExpressions, builder.tokens);
         builder.tokensPriorities[LHS] = builder.priority++;
         // print the postfix for debugging
-        treeParsingUtilities.printPostfix(builder.regexExpressions[LHS]);
+        // treeParsingUtilities.printPostfix(builder.regexExpressions[LHS]);
     }
 
     bool checkRule(const std::string& rule) override

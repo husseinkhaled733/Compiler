@@ -32,7 +32,7 @@ State* DFA::convertNFAtoDFA(State *startState) {
         needToProcess.pop();
         if (currentState->isFinal) {
             tokensPartitions[currentState->token].insert(currentState);
-            cout << "Final State: " << currentState->token << endl;
+            // cout << "Final State: " << currentState->token << endl;
         }
         else {
             normalStates.insert(currentState);

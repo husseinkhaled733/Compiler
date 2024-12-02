@@ -1,0 +1,25 @@
+Token Type          Value               
+----------------------------------------
+int                 int                 
+id                  sum                 
+,                   ,                   
+id                  count               
+,                   ,                   
+id                  pass                
+,                   ,                   
+id                  mnt                 
+;                   ;                   
+while               while               
+(                   (                   
+id                  pass                
+relop               !=                  
+num                 10                  
+)                   )                   
+{                   {                   
+id                  pass                
+assign              =                   
+id                  pass                
+addop               +                   
+num                 1                   
+;                   ;                   
+}                   }                   

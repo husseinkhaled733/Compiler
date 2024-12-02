@@ -17,7 +17,12 @@ LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, S
 
 Lexeme LexicalAnalyser::nextToken() {
 
-    if (!currentLexeme.getValue().empty() and currentLexeme.getTokenType() != DELIMITER) {
+    if (currentLexeme.getTokenType() == DELIMITER) {
+        currentLexeme = Lexeme();
+        nextToken();
+    }
+
+    if (!currentLexeme.getValue().empty()) {
         auto token    = currentLexeme;
         currentLexeme = Lexeme();
         return token;
@@ -106,7 +111,7 @@ Lexeme LexicalAnalyser::nextToken() {
     if (!fullBuffer.empty()) {
         logError(fullBuffer, static_cast<int>(fullBuffer.size()));
     }
-    return {};
+    return Lexeme();
 }
 
 bool LexicalAnalyser::hasNextToken() {
@@ -123,10 +128,21 @@ void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const
         throw std::runtime_error("Unable to open output file");
     }
 
+    auto printTableHeader = [](std::ostream &output) {
+        output << std::setw(20) << std::left << "Token Type"
+               << std::setw(20) << std::left << "Value" << std::endl;
+        output << std::string(40, '-') << std::endl;
+    };
+
+    auto printTableRow = [](std::ostream &output, const std::string &tokenType, const std::string &value) {
+        output << std::setw(20) << std::left << tokenType
+               << std::setw(20) << std::left << value << std::endl;
+    };
+
+    printTableHeader(outputFile);
     while (hasNextToken()) {
         auto currentLexeme = nextToken();
-        outputFile << currentLexeme.getTokenType() << std::endl;
-
+        printTableRow(outputFile, currentLexeme.getTokenType(), currentLexeme.getValue());
         std::regex idPattern("^id\\w*$", std::regex::icase);
         if (std::regex_match(currentLexeme.getTokenType(), idPattern)) {
             symbolTableHandler.addSymbol(currentLexeme.getValue());
