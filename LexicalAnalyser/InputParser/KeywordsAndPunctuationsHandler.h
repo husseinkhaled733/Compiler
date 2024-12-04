@@ -12,14 +12,13 @@
 class KeywordsAndPunctuationsHandler final : public RulesHandler
 {
     TreeParsingUtilities treeParsingUtilities;
-    Utilities utilities;
     public:
         void handleRule(std::string& rule, RegexTreeBuilder& builder) override
         {
-            utilities.removeFirstAndLastCharacters(rule);
+            Utilities::removeFirstAndLastCharacters(rule);
             const std::regex regex(R"(\\(?!\\))");
             rule = std::regex_replace(rule, regex, "");
-            for (std::vector<std::string> tokens = utilities.splitBySpaces(rule); auto token : tokens)
+            for (std::vector<std::string> tokens = Utilities::splitBySpaces(rule); const auto& token : tokens)
             {
                 builder.tokens[token] = treeParsingUtilities.processString(token, RegexOperations::CONCATENATION);
                 builder.tokensPriorities[token] = 0;

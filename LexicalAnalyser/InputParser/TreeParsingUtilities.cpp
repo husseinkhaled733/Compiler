@@ -31,12 +31,12 @@ TreeParsingUtilities::TreeParsingUtilities()
     reservedLexicalOperator.insert(RegexOperations::CLOSE_PARANTHESIS);
     reservedLexicalOperator.insert(RegexOperations::ALTERNATION);
 
-    operatorsPrecedence[utilities.charToString(RegexOperations::CLOSE_PARANTHESIS)] = 0;
-    operatorsPrecedence[utilities.charToString(RegexOperations::ENUMERATION)] = 1;
-    operatorsPrecedence[utilities.charToString(RegexOperations::KLEENE_PLUS)] = 2;
-    operatorsPrecedence[utilities.charToString(RegexOperations::KLEENE_STAR)] = 2;
-    operatorsPrecedence[utilities.charToString(RegexOperations::CONCATENATION)] = 3; // concatenation
-    operatorsPrecedence[utilities.charToString(RegexOperations::ALTERNATION)] = 4;
+    operatorsPrecedence[Utilities::charToString(RegexOperations::CLOSE_PARANTHESIS)] = 0;
+    operatorsPrecedence[Utilities::charToString(RegexOperations::ENUMERATION)] = 1;
+    operatorsPrecedence[Utilities::charToString(RegexOperations::KLEENE_PLUS)] = 2;
+    operatorsPrecedence[Utilities::charToString(RegexOperations::KLEENE_STAR)] = 2;
+    operatorsPrecedence[Utilities::charToString(RegexOperations::CONCATENATION)] = 3; // concatenation
+    operatorsPrecedence[Utilities::charToString(RegexOperations::ALTERNATION)] = 4;
 }
 
 
@@ -107,7 +107,7 @@ std::vector<std::string> TreeParsingUtilities::tokenize(const std::string& RHS, 
             || RHSTokens[i] == ")" && !operatorsPrecedence.contains(RHSTokens[i + 1])) {
 
             RHSTokens.insert(RHSTokens.begin() + i + 1,
-                utilities.charToString(RegexOperations::CONCATENATION));
+                Utilities::charToString(RegexOperations::CONCATENATION));
             i++;  // Skip the next element since it's been shifted by the insert
             }
     }

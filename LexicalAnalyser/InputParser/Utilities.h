@@ -18,9 +18,7 @@ class Utilities {
 
         static void removeOccurrences(std::string& s, char c);
 
-        std::string getStringWithoutOccureneces(std::string& s, char c);
-
-        std::string charToString(char c);
+        static std::string charToString(char c);
 
         static std::vector<std::string> splitByDelimiter(const std::string& str, char delimiter);
 

@@ -10,17 +10,16 @@ class RegularDefinitionHandler  : public RulesHandler
 {
 public:
     TreeParsingUtilities treeParsingUtilities;
-    Utilities utilities;
     void handleRule(std::string& rule, RegexTreeBuilder& builder) override
     {
         // Split the rule into LHS and RHS
-        const std::vector<std::string> tokens = utilities.splitByDelimiter(rule, ':', 2);
+        const std::vector<std::string> tokens = Utilities::splitByDelimiter(rule, ':', 2);
         std::string LHS = tokens.at(0);
         const std::string& RHS = tokens.at(1);
 
         // Remove leading, trailing spaces and escapes from LHS
-        utilities.trim(LHS);
-        utilities.removeOccurrences(LHS, '\\');
+        Utilities::trim(LHS);
+        Utilities::removeOccurrences(LHS, '\\');
 
         // Tokenize the RHS expression
         const std::vector<std::string> RHSTokens = treeParsingUtilities.tokenize(RHS, rule);
