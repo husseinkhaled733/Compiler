@@ -17,18 +17,20 @@ class KeywordsAndPunctuationsHandler final : public RulesHandler
         void handleRule(std::string& rule, RegexTreeBuilder& builder) override
         {
             utilities.removeFirstAndLastCharacters(rule);
+            const std::regex regex(R"(\\(?!\\))");
+            rule = std::regex_replace(rule, regex, "");
             for (std::vector<std::string> tokens = utilities.splitBySpaces(rule); auto token : tokens)
             {
-                std::string LHS = token;
-                utilities.removeOccurrences(LHS, '\\');
-                builder.tokens[LHS] = treeParsingUtilities.processString(token, RegexOperations::CONCATENATION);
+                builder.tokens[token] = treeParsingUtilities.processString(token, RegexOperations::CONCATENATION);
                 builder.tokensPriorities[token] = 0;
             }
         }
         bool checkRule(const std::string& rule) override
         {
-            const std::regex punctuationRgx(R"(\[[\s]*([\W]*[\s]*)*\])");
-            const std::regex keywordsRgx(R"(\{[\s]*([a-z]*[\s]*)*\})");
+            // special characters escaped or any other character
+            const std::regex punctuationRgx(R"(\[[\s]*(\\[\(\)\{\}:=]|[^\\(\)\{\}:=\w]|[\s])*\])");
+            // keywords should be formed of letters or underscores
+            const std::regex keywordsRgx(R"(\{[a-zA-Z_\s]*\})");
             return regex_match(rule, punctuationRgx) || regex_match(rule, keywordsRgx);
         }
 };

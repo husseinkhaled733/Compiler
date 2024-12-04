@@ -33,7 +33,8 @@ public:
     }
     bool checkRule(const std::string& rule) override
     {
-        const std::regex expressionRgx(R"([\s]*[a-zA-z0-9]*[\s]*=[\s|a-zA-z0-9|\-|\+|\*|\(|\)|\||\=|\<|>|\!\.|\/]*)");
+        // LHS should contain one word that consists of letters, numbers or underscores, but should start with a letter or underscore
+        const std::regex expressionRgx(R"([\s]*[a-zA-z_]+[\w]*[\s]*=[\s|a-zA-z0-9|\-|\+|\*|\(|\)|\||\=|\<|>|\!\.|\/]*)");
         return regex_match(rule, expressionRgx);
     }
 };
