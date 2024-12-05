@@ -5,6 +5,7 @@
 #include "TreeParsingUtilities.h"
 
 #include "Constants.h"
+#include "../Utils.h"
 #include <iostream>
 #include <map>
 #include <stdexcept>
@@ -68,7 +69,7 @@ std::vector<std::string> TreeParsingUtilities::tokenize(const std::string& RHS, 
                     RHSTokens.push_back(currToken);
                     currToken.clear();
                 }
-                RHSTokens.emplace_back(" ");
+                RHSTokens.emplace_back(1,epsilon);
             }
             else if (reservedLexicalChars.contains(nextChar)) {
                 currToken += '\\';

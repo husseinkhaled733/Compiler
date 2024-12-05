@@ -63,6 +63,8 @@ State* DFA::convertNFAtoDFA(State *startState) {
             possibleInputs.insert(input);
         }
     }
+    int dfaStatesCount = dfaStates.size();
+    cout << "Number of DFA states: " << dfaStatesCount << endl;
     partitions.emplace_back(normalStates);
     for (const auto &states: tokensPartitions | views::values) {
         partitions.emplace_back(states);
@@ -139,6 +141,7 @@ State* DFA::minimizeDFA(State *startState) {
         }
         minimizedStates.push_back(newState);
     }
+    cout<<"Number of minimized states: "<<minimizedStates.size()<<endl;
     // Modify the transitions to point to the new states
     for (const auto& state: minimizedStates) {
         for (auto& [input, next] : state->transitions) {

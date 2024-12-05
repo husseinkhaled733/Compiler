@@ -50,4 +50,5 @@ void traverse(State* startState) {
         }
         cout << "\n"; // Add spacing between states for better readability
     }
+    cout<<"Number of states: "<<visited.size()<<endl;
 }

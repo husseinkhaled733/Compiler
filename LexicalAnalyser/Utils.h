@@ -6,9 +6,10 @@
 #define UTILS_H
 #include <string>
 #include <unordered_map>
+#include "State.h"
 
 inline std::unordered_map<std::string, int> priorities;
-inline char epsilon = '\0';
+inline char epsilon = 0;
 void traverse(State* startState);
 
 #endif //UTILS_H

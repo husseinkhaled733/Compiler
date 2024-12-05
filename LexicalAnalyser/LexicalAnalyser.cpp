@@ -63,7 +63,7 @@ Lexeme LexicalAnalyser::nextToken() {
             if (nextStates.empty()) {
 
                 if (longestMatchIndex == -1) {
-                    i             = ++errorBackupIndex;
+                    i = errorBackupIndex++;
                     errorOccurred = true;
                 } else {
                     auto longestMatchTokenValue =

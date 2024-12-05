@@ -7,7 +7,7 @@
 #include <iostream>
 
 int main() {
-    RegexTreeBuilder regexTreeBuilder("/media/mohamed_anwar/HDD/CSED/9th Semester/Compilers/Project/Compiler/io"
+    RegexTreeBuilder regexTreeBuilder("/home/husseinkhaled/Compiler/io"
                                       "/regex.txt");
     cout << endl;
 
@@ -24,6 +24,7 @@ int main() {
     State* startState = dfa.convertNFAtoDFA(nfa);
     State* minimizedDFA = dfa.minimizeDFA(startState);
     dfa.printMinimizedDFA();
+    // dfa.printDFA();
 
     // DotExporter::exportToDot(minimizedDFA, "/media/mohamed_anwar/HDD/CSED/9th Semester/Compilers/Project/Compiler/io/"
     // "dfa.dot");
@@ -31,8 +32,8 @@ int main() {
     SymbolTableHandler symbol_table_handler;
     LexicalAnalyser lexical_analyser(symbol_table_handler, minimizedDFA);
 
-    lexical_analyser.tokenizeInputFile("/media/mohamed_anwar/HDD/CSED/9th Semester/Compilers/Project/Compiler/io/"
-                                       "input.txt","/media/mohamed_anwar/HDD/CSED/9th Semester/Compilers/Project/"
+    lexical_analyser.tokenizeInputFile("/home/husseinkhaled/Compiler/io/"
+                                       "input.txt","/home/husseinkhaled/"
                                        "Compiler/io/output.txt");
 
     return 0;
