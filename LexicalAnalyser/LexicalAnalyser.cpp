@@ -3,7 +3,6 @@
 //
 
 #include "LexicalAnalyser.h"
-
 #include "InputParser/Constants.h"
 
 LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, State* startState) {
@@ -16,11 +15,6 @@ LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, S
 }
 
 Lexeme LexicalAnalyser::nextToken() {
-
-    if (currentLexeme.getTokenType() == DELIMITER) {
-        currentLexeme = Lexeme();
-        nextToken();
-    }
 
     if (!currentLexeme.getValue().empty()) {
         auto token    = currentLexeme;
@@ -115,7 +109,10 @@ Lexeme LexicalAnalyser::nextToken() {
 }
 
 bool LexicalAnalyser::hasNextToken() {
-    currentLexeme = nextToken();
+    do {
+        currentLexeme = Lexeme();
+        nextToken();
+    } while (currentLexeme.getTokenType() == DELIMITER);
     return !currentLexeme.getValue().empty();
 }
 
