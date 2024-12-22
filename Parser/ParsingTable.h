@@ -1,0 +1,21 @@
+//
+// Created by mohamed_anwar on 12/22/24.
+//
+
+#ifndef PARSINGTABLE_H
+#define PARSINGTABLE_H
+
+#include "NonTerminal.h"
+#include "Terminal.h"
+#include <bits/stdc++.h>
+
+using namespace std;
+
+class ParsingTable {
+    const int SYNC = -1;
+    unordered_map<NonTerminal*, unordered_map<Terminal*, int>> table;
+};
+
+
+
+#endif //PARSINGTABLE_H
