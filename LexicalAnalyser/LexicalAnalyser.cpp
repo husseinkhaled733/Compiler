@@ -3,15 +3,22 @@
 //
 
 #include "LexicalAnalyser.h"
+
 #include "InputParser/Constants.h"
 
-LexicalAnalyser::LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, State* startState) {
-    minimalDFAStartState = startState;
+LexicalAnalyser::LexicalAnalyser(const std::string& rulesFilePath, const std::string& sourceFilePath)
+    : regexTreeBuilder(rulesFilePath),
+      nfaBuilder(regexTreeBuilder.tokens),
+      dfaBuilder(),
+      sourceFilePath(sourceFilePath),
+      currentState(nullptr),
+      minimalDFAStartState(nullptr),
+      currentIndexInSource(0) {
 
-    this->symbolTableHandler   = symbolTableHandler;
+    this->minimalDFAStartState = dfaBuilder.minimizeDFA(
+        dfaBuilder.convertNFAtoDFA(nfaBuilder.buildNFA())
+    );
     this->currentState         = minimalDFAStartState;
-    this->currentIndexInSource = 0;
-    this->currentLexeme        = Lexeme();
 }
 
 Lexeme LexicalAnalyser::nextToken() {
@@ -57,7 +64,7 @@ Lexeme LexicalAnalyser::nextToken() {
             if (nextStates.empty()) {
 
                 if (longestMatchIndex == -1) {
-                    i = errorBackupIndex++;
+                    i             = errorBackupIndex++;
                     errorOccurred = true;
                 } else {
                     auto longestMatchTokenValue =
@@ -105,7 +112,7 @@ Lexeme LexicalAnalyser::nextToken() {
     if (!fullBuffer.empty()) {
         logError(fullBuffer, static_cast<int>(fullBuffer.size()));
     }
-    return Lexeme();
+    return {};
 }
 
 bool LexicalAnalyser::hasNextToken() {
@@ -125,15 +132,13 @@ void LexicalAnalyser::tokenizeInputFile(const std::string& sourceFilePath, const
         throw std::runtime_error("Unable to open output file");
     }
 
-    auto printTableHeader = [](std::ostream &output) {
-        output << std::setw(20) << std::left << "Token Type"
-               << std::setw(20) << std::left << "Value" << std::endl;
+    auto printTableHeader = [](std::ostream& output) {
+        output << std::setw(20) << std::left << "Token Type" << std::setw(20) << std::left << "Value" << std::endl;
         output << std::string(40, '-') << std::endl;
     };
 
-    auto printTableRow = [](std::ostream &output, const std::string &tokenType, const std::string &value) {
-        output << std::setw(20) << std::left << tokenType
-               << std::setw(20) << std::left << value << std::endl;
+    auto printTableRow = [](std::ostream& output, const std::string& tokenType, const std::string& value) {
+        output << std::setw(20) << std::left << tokenType << std::setw(20) << std::left << value << std::endl;
     };
 
     printTableHeader(outputFile);

@@ -7,7 +7,7 @@
 #include "../State.h"
 using namespace std;
 
-class DFA {
+class DFABuilder {
 public:
     State* dfaStartState;
     State* minimizedDFAStartState;
