@@ -11,25 +11,25 @@
     unordered_map<string, vector<vector<Symbol*>>> productions;
  */
 
-void ParsingTableGenerator::findFirst() {
-    for (auto nonTerminal : productions.keys()){
-        if(grammar.nonTerminals[nonTerminal].getFirstSet().empty()){
-            findFirstUtil(nonTerminal);
+void ParsingTableGenerator::findFirstUtil() {
+    for (const auto& nonTerminal : views::values(grammar->nonTerminals)){
+        if(nonTerminal->getFirstSet().empty()){
+            findFirst(nonTerminal);
         }
     }
 }
-void ParsingTableGenerator::findFirstUtil(NonTerminal* nonTerminal) {
+void ParsingTableGenerator::findFirst(NonTerminal* nonTerminal) {
     string nonTerminalString = nonTerminal->getName();
-    for (auto production : productions[nonTerminalString]){
-        if (production[0].isTerminal()){
-            grammar.nonTerminals[nonTerminalString].addToFirstSet(production[0]);
+    for (auto production : grammar->productions[nonTerminalString]){
+        Symbol* firstSymbol = production.front();
+        if (firstSymbol->isTerminal()){
+            grammar->nonTerminals[nonTerminalString]->addToFirstSet(dynamic_cast<Terminal*>(firstSymbol));
         }
         else{
-            if(grammar.nonTerminals[production[0]].getFirstSet().empty()) {
-                findFirstUtil(production[0]);
+            if(grammar->nonTerminals[firstSymbol->getName()]->getFirstSet().empty()) {
+                findFirst(dynamic_cast<NonTerminal*>(firstSymbol));
             }
-            const auto& subFirstSet = production[0]->getFirstSet();
-            nonTerminal->getFirstSet().insert(subFirstSet.begin(), subFirstSet.end());
+            nonTerminal-> addToFirstSet(dynamic_cast<NonTerminal*>(firstSymbol)->getFirstSet());
         }
     }
 }
@@ -52,15 +52,19 @@ void ParsingTableGenerator::findFirstUtil(NonTerminal* nonTerminal) {
     };
  */
 
-void ParsingTableGenerator::findForwardUtil() {
-    for (auto nonTerminal : productions){
-        vector<NonTerminalOccurrence*> occurrences = grammar.nonTerminals[nonTerminal].getOccurrencePositions();
-        for(const NonTerminalOccurrence& occurrence : occurrences){
+void ParsingTableGenerator:: findFollow(NonTerminal* nonTerminal){
+    for (const auto& nonTerminal : views::values(grammar->nonTerminals))
+    {
+        auto occurrences = nonTerminal->getOccurrencePositions();
+        for(const auto occurrence : occurrences){
+            grammar->productions[occurrence->nonTerminal]
 
         }
     }
+
 }
-void ParsingTableGenerator::findForward() {
+void ParsingTableGenerator::findFollowUtil()
+{
     // iterate over key of the production for each non-terminal do
         // iterate over occurrences of this non-terminal
             // for each occurrence
@@ -77,12 +81,11 @@ void ParsingTableGenerator::findForward() {
  */
 ParsingTable ParsingTableGenerator::generateParsingTable() {
     ParsingTable parsingTable;
-    for(auto nonTerminal : grammar.nonTerminals){
-        NonTerminal nonTerminalObj = grammar.nonTerminals[nonTerminal];
-        for(const Terminal& first : nonTerminalObj.getFirstSet()){
-            if(first.isNullable()){
-                for(const Terminal& follow : nonTerminalObj.getFollowSet()){
-                    parsingTable.table[no]
+    for(auto [nonTerminalString , nonTerminalObj]  : grammar->nonTerminals){
+        for(const Terminal& first : nonTerminalObj->getFirstSet()){
+            if(first.getName() == grammar->EPSILON){
+                for(const Terminal& follow : nonTerminalObj->getFollowSet()){
+                    parsingTable.table[nonTerminalString][follow.getName()] = ;
                 }
 
             }

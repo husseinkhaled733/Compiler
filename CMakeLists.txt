@@ -46,4 +46,5 @@ add_executable(Compiler main.cpp
         LexicalAnalyser/DotExporter.h
         Parser/ParsingTableGenerator.cpp
         Parser/ParsingTableGenerator.h
+        Parser/NonTerminal.h
 )
