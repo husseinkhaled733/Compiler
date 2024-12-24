@@ -13,7 +13,7 @@ using namespace std;
 
 class ParsingTable {
     const int SYNC = -1;
-    unordered_map<NonTerminal*, unordered_map<Terminal*, int>> table;
+    unordered_map<string, unordered_map<string, int>> table;
 };
 
 
