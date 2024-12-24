@@ -44,4 +44,6 @@ add_executable(Compiler main.cpp
         LexicalAnalyser/InputParser/TreeParsingUtilities.cpp
         LexicalAnalyser/InputParser/TreeParsingUtilities.h
         LexicalAnalyser/DotExporter.h
+        Parser/ParsingTableGenerator.cpp
+        Parser/ParsingTableGenerator.h
 )
