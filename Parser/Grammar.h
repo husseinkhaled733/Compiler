@@ -10,6 +10,7 @@
 using namespace std;
 
 class Grammar {
+    NonTerminal* startSymbol;
     unordered_map<string, NonTerminal*> nonTerminals;
     unordered_map<string, vector<vector<Symbol*>>> productions;
 };
