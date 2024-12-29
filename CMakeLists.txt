@@ -47,4 +47,7 @@ add_executable(Compiler main.cpp
         Parser/ParsingTableGenerator.cpp
         Parser/ParsingTableGenerator.h
         Parser/NonTerminal.h
+        Parser/Grammar.h
+        Parser/Grammar.cpp
+
 )
