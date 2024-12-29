@@ -40,8 +40,18 @@ public:
         firstSet.insert(terminal);
     }
 
+    void addToFirstSet(unordered_set<Terminal*>& terminals)
+    {
+        firstSet.insert(terminals.begin(), terminals.end());
+    }
+
     void addToFollowSet(Terminal* terminal) {
         followSet.insert(terminal);
+    }
+
+    void addToFollowSet(unordered_set<Terminal*>& terminals)
+    {
+        followSet.insert(terminals.begin(), terminals.end());
     }
 
     void addOccurrence(NonTerminal* nonTerminal, int derivationIndex, int inDerivationIndex) {
