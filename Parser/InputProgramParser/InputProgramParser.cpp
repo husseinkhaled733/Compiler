@@ -44,8 +44,7 @@ bool InputProgramParser::handleTerminal(string &currentTokenName, bool &isInputE
             }
         }
         else {
-            currentLexeme = lexicalAnalyser->nextToken();
-            currentTokenName=currentLexeme.getTokenType();
+            currentTokenName=lexicalAnalyser->nextToken().getTokenType();
         }
     } else {
         cout << "Error: Expected token " << getName(currentSymbol->getName());
@@ -67,8 +66,7 @@ void InputProgramParser::handleNonTerminal(string &currentTokenName, bool &isInp
         cout<<"--------------------------------------------------------------------------------"<<endl;
         found = false;
         while (lexicalAnalyser->hasNextToken()) {
-            currentLexeme = lexicalAnalyser->nextToken();
-            currentTokenName=currentLexeme.getTokenType();
+            currentTokenName=lexicalAnalyser->nextToken().getTokenType();
             if (parsingTable->table[nonTerminalName].contains(currentTokenName)) {
                 found = true;
                 break;
@@ -128,8 +126,7 @@ void InputProgramParser::parse() {
         cout << "Error: Empty input." << endl;
         return;
     }
-    currentLexeme = lexicalAnalyser->nextToken();
-    string currentTokenName=currentLexeme.getTokenType();
+    string currentTokenName=lexicalAnalyser->nextToken().getTokenType();
     bool isInputEnd=false;
     while (!remainingSymbols.empty()) {
         cout<<"--------------------------------------------------------------------------------"<<endl;

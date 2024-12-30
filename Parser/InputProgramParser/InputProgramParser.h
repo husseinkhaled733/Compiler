@@ -17,7 +17,6 @@ private:
     LexicalAnalyser* lexicalAnalyser;
     Grammar* grammar;
     ParsingTable* parsingTable;
-    Lexeme currentLexeme;
     ofstream output;
     vector<Symbol* > matchedTokens;
     bool handleTerminal(string &currentTokenName, bool &isInputEnd, Symbol *currentSymbol);
