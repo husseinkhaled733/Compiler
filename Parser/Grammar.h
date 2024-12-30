@@ -12,22 +12,29 @@ using namespace std;
 
 class Grammar {
 public:
-    static const Terminal* EPSILON;
-    static const Terminal* END;
+    static Terminal* EPSILON;
+    static Terminal* END;
+    static const set<string> RESERVED_SYMBOLS;
+    static const set<char> IGNORED_CHARS;
 
 private:
     NonTerminal* startSymbol;
     unordered_map<string, NonTerminal*> nonTerminals;
-    unordered_map<string, Terminal*> terminals;
     unordered_map<string, vector<vector<Symbol*>>> productions;
 
 public:
     Grammar();
 
     NonTerminal* getStartSymbol() const;
-    std::unordered_map<std::string, NonTerminal*>& getNonTerminals();
-    std::unordered_map<std::string, Terminal*>& getTerminals();
-    std::unordered_map<std::string, std::vector<std::vector<Symbol*>>>& getProductions();
+    unordered_map<string, NonTerminal*>& getNonTerminals();
+    unordered_map<string, Terminal*>& getTerminals();
+    unordered_map<string, vector<vector<Symbol*>>>& getProductions();
+
+    void addNonTerminal(NonTerminal* nonTerminal);
+    void setStartSymbol(NonTerminal* startSymbol);
+    void addProduction(NonTerminal* nonTerminal, vector<Symbol*> production);
+
+    void printGrammar() const;
 };
 
 
