@@ -146,13 +146,13 @@ void ParsingTableGenerator::printFirstAndFollow() {
         for (const auto terminal : nonTerminalObj->getFirstSet()) {
             if (terminal == Grammar::EPSILON)
                 cout << "epsilon ";
-            else cout << terminal->getName() << " ";
+            else cout << terminal->getName() << ", ";
         }
         cout << "}" << endl;
         // Print the Follow set
         cout << "  Follow: { ";
         for (const auto terminal : nonTerminalObj->getFollowSet()) {
-            cout << terminal->getName() << " ";
+            cout << terminal->getName() << ", ";
         }
         cout << "}" << endl;
 

@@ -7,7 +7,9 @@ using namespace std;
 
 
 void ParsingTable :: printParsingTable(unordered_map<string, vector<vector<Symbol*>>>& productions) const {
-    cout << "Parsing Table:" << endl;
+    cout<<"========================="<<endl;
+    cout << "     Parsing Table:" << endl;
+    cout<<"========================="<<endl;
 
     for (const auto& row : table) {
         const string& nonTerminal = row.first;

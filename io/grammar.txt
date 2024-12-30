@@ -1,25 +1,17 @@
-# METHOD_BODY ::= 'STATEMENT_LIST
-# STATEMENT_LIST ::= STATEMENT
-               | STATEMENT_LIST STATEMENT
-# STATEMENT ::= DECLARATION
-           | IF
-           | WHILE
-           | ASSIGNMENT
+# METHOD_BODY ::= STATEMENT_LIST
+# STATEMENT_LIST ::= STATEMENT STATEMENT_LIST_TAIL
+# STATEMENT_LIST_TAIL ::= ';' STATEMENT STATEMENT_LIST_TAIL | '\L'
+# STATEMENT ::= DECLARATION | IF | WHILE | ASSIGNMENT
 # DECLARATION ::= PRIMITIVE_TYPE 'id' ';'
-# PRIMITIVE_TYPE ::= 'int'
-                | 'float'
+# PRIMITIVE_TYPE ::= 'int' | 'float'
 # IF ::= 'if' '(' EXPRESSION ')' '{' STATEMENT '}' 'else' '{' STATEMENT '}'
 # WHILE ::= 'while' '(' EXPRESSION ')' '{' STATEMENT '}'
-# ASSIGNMENT ::= 'id' '=' EXPRESSION ';'
-# EXPRESSION ::= SIMPLE_EXPRESSION
-            | SIMPLE_EXPRESSION 'relop' SIMPLE_EXPRESSION
-# SIMPLE_EXPRESSION ::= TERM
-                   | SIGN TERM
-                   | SIMPLE_EXPRESSION 'addop' TERM
-# TERM ::= FACTOR
-      | TERM 'mulop' FACTOR
-# FACTOR ::= 'id'
-        | 'num'
-        | '(' EXPRESSION ')'
-# SIGN ::= '+'
-      | '-'
+# ASSIGNMENT ::= 'id' 'assign' EXPRESSION ';'
+# EXPRESSION ::= SIMPLE_EXPRESSION BUFFER1
+# BUFFER1 ::= 'relop' SIMPLE_EXPRESSION | '\L'
+# SIMPLE_EXPRESSION ::= TERM SIMPLE_EXPRESSION_TAIL
+# SIMPLE_EXPRESSION_TAIL ::= 'addop' TERM SIMPLE_EXPRESSION_TAIL | '\L'
+# TERM ::= FACTOR TERM_TAIL
+# TERM_TAIL ::= 'mulop' FACTOR TERM_TAIL | '\L'
+# FACTOR ::= 'id' | 'num' | '(' EXPRESSION ')'
+# SIGN ::= 'addop'
