@@ -40,8 +40,8 @@ void ParsingTableGenerator::findFollowUtil()  {
 void ParsingTableGenerator:: findFollow(NonTerminal* nonTerminal){
     if (!nonTerminal->getFollowSet().empty()) return;
     if(nonTerminal == grammar->getStartSymbol()){
-        auto endTerminal = std::make_unique<Terminal>(Grammar::END->getName());
-        grammar->getStartSymbol()->addToFollowSet(endTerminal.get());
+        auto* endTerminal =new Terminal(Grammar::END->getName());
+        grammar->getStartSymbol()->addToFollowSet(endTerminal);
     }
     auto occurrences = nonTerminal->getOccurrencePositions();
     for(const auto occurrence : occurrences){
@@ -149,7 +149,6 @@ void ParsingTableGenerator::printFirstAndFollow() {
             else cout << terminal->getName() << " ";
         }
         cout << "}" << endl;
-
         // Print the Follow set
         cout << "  Follow: { ";
         for (const auto terminal : nonTerminalObj->getFollowSet()) {

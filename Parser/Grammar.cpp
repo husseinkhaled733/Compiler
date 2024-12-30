@@ -5,7 +5,7 @@
 #include "Grammar.h"
 
 const Terminal* Grammar::EPSILON = new Terminal(std::string(1, 0));
-const Terminal* Grammar::END = new Terminal(std::string(1, 1));
+const Terminal* Grammar::END = new Terminal("$");
 
 Grammar::Grammar() {
     startSymbol = nullptr;
