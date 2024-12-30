@@ -95,6 +95,7 @@ void InputProgramParser::handleNonTerminal(string &currentTokenName, bool &isInp
     // sync
     if (index==parsingTable->SYNC) {
         cout << "Error: Unexpected token " << getName(currentTokenName) << endl;
+        cout <<"Entry is SYNC in parsing table for non-terminal "<<getName(nonTerminalName)<<" and token "<<getName(currentTokenName)<<endl;
         cout<<"Need to synchronize and get next symbol"<<endl;
         cout<<"--------------------------------------------------------------------------------"<<endl;
         return;
@@ -130,8 +131,10 @@ void InputProgramParser::parse() {
     bool isInputEnd=false;
     while (!remainingSymbols.empty()) {
         cout<<"--------------------------------------------------------------------------------"<<endl;
-        printLeftMostDerivation();
         Symbol* currentSymbol = remainingSymbols.top();
+        if (!currentSymbol->isTerminal()) {
+            printLeftMostDerivation();
+        }
         remainingSymbols.pop();
         if (currentSymbol==Grammar::EPSILON) {
             continue;
