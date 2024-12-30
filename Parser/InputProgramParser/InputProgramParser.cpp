@@ -26,6 +26,103 @@ void InputProgramParser::parseInputProgram(const string &outputFilePath) {
 }
 
 
+bool InputProgramParser::handleTerminal(string &currentTokenName, bool &isInputEnd, Symbol *currentSymbol) {
+    if (currentSymbol->getName() == currentTokenName) {
+        // A match found
+        cout << "A match found for token: "<<getName(currentTokenName)<<endl;
+        cout<<"--------------------------------------------------------------------------------"<<endl;
+        matchedTokens.emplace_back(currentSymbol);
+        if (!lexicalAnalyser->hasNextToken()) {
+            if (!isInputEnd) {
+                // put $ manually in the input
+                currentTokenName=Grammar::END->getName();
+                isInputEnd=true;
+            }
+            // End of the input
+            else {
+                return true;
+            }
+        }
+        else {
+            currentLexeme = lexicalAnalyser->nextToken();
+            currentTokenName=currentLexeme.getTokenType();
+        }
+    } else {
+        cout << "Error: Expected token " << getName(currentSymbol->getName());
+        cout << " but found "<<getName(currentTokenName)<<endl;
+        cout << "Inserting missing terminal " << currentSymbol->getName() << endl;
+        cout<<"--------------------------------------------------------------------------------"<<endl;
+        matchedTokens.emplace_back(currentSymbol);
+    }
+    return false;
+}
+
+void InputProgramParser::handleNonTerminal(string &currentTokenName, bool &isInputEnd, const Symbol *currentSymbol) {
+    const string nonTerminalName = currentSymbol->getName();
+    bool found = true;
+    if (!parsingTable->table[nonTerminalName].contains(currentTokenName)) {
+        cout << "Error: Unexpected token " << getName(currentTokenName)<< endl;
+        cout<<"Entry not found in parsing table for non-terminal "<<getName(nonTerminalName)<<" and token "<<getName(currentTokenName)<<endl;
+        cout <<"Ignore token "<<getName(currentTokenName)<<endl;
+        cout<<"--------------------------------------------------------------------------------"<<endl;
+        found = false;
+        while (lexicalAnalyser->hasNextToken()) {
+            currentLexeme = lexicalAnalyser->nextToken();
+            currentTokenName=currentLexeme.getTokenType();
+            if (parsingTable->table[nonTerminalName].contains(currentTokenName)) {
+                found = true;
+                break;
+            }
+            cout << "Error: Unexpected token " << getName(currentTokenName)<< endl;
+            cout<<"Entry not found in parsing table for non-terminal "<<getName(nonTerminalName)<<" and token "<<getName(currentTokenName)<<endl;
+            cout<<"Ignore token "<<getName(currentTokenName)<<endl;
+            cout<<"--------------------------------------------------------------------------------"<<endl;
+        }
+        if (!isInputEnd && !found) {
+            currentTokenName=Grammar::END->getName();
+            isInputEnd=true;
+            if (parsingTable->table[nonTerminalName].contains(currentTokenName)) {
+                found = true;
+            }
+            cout << "Error: Unexpected token " << getName(currentTokenName)<< endl;
+            cout <<"Entry not found in parsing table for non-terminal "<<getName(nonTerminalName)<<" and token "<<getName(currentTokenName)<<endl;
+            cout <<"Ignore token "<<getName(currentTokenName)<<endl;
+            cout<<"--------------------------------------------------------------------------------"<<endl;
+        }
+    }
+    if (!found) {
+        return;
+    }
+    const int index = parsingTable->table[nonTerminalName][currentTokenName];
+    // sync
+    if (index==parsingTable->SYNC) {
+        cout << "Error: Unexpected token " << getName(currentTokenName) << endl;
+        cout<<"Need to synchronize and get next symbol"<<endl;
+        cout<<"--------------------------------------------------------------------------------"<<endl;
+        return;
+    }
+    const vector<Symbol* > production = grammar->getProductions()[nonTerminalName][index];
+    cout<<"Production: ";
+    for (int i = production.size() - 1; i >= 0; i--) {
+        cout<<getName(production[i]->getName())<<" ";
+        if (production[i]==Grammar::EPSILON) {
+            break;
+        }
+        remainingSymbols.push(production[i]);
+    }
+    cout<<endl;
+}
+
+string InputProgramParser::getName(const string& currentName) {
+    if (currentName==Grammar::END->getName()) {
+        return "$";
+    }
+    if (currentName == Grammar::EPSILON->getName()) {
+        return "E";
+    }
+    return currentName;
+}
+
 void InputProgramParser::parse() {
     if (!lexicalAnalyser->hasNextToken()) {
         cout << "Error: Empty input." << endl;
@@ -35,95 +132,21 @@ void InputProgramParser::parse() {
     string currentTokenName=currentLexeme.getTokenType();
     bool isInputEnd=false;
     while (!remainingSymbols.empty()) {
+        cout<<"--------------------------------------------------------------------------------"<<endl;
         printLeftMostDerivation();
         Symbol* currentSymbol = remainingSymbols.top();
         remainingSymbols.pop();
         if (currentSymbol==Grammar::EPSILON) {
             continue;
         }
-        cout<<"Current Symbol: ";
-        if (currentSymbol==Grammar::END) {
-            cout<<"$"<<endl;
-        }
-        else {
-            cout<<currentSymbol->getName()<<endl;
-        }
-        cout<<"Current token: ";
-        if (currentTokenName==Grammar::END->getName()) {
-            cout<<"$"<<endl;
-        }
-        else {
-            cout<<currentTokenName<<endl;
-        }
+        cout<<"Current Symbol: "<<getName(currentSymbol->getName())<<endl;
+        cout<<"Current token: "<<getName(currentTokenName)<<endl;
         // If the current symbol is a terminal
         if (currentSymbol->isTerminal()) {
-            if (currentSymbol->getName() == currentTokenName) {
-                cout << "Matched terminal: " << currentSymbol->getName() << endl;
-                if (!lexicalAnalyser->hasNextToken()) {
-                    if (!isInputEnd) {
-                        currentTokenName=Grammar::END->getName();
-                        isInputEnd=true;
-                    }
-                    else {
-                        break;
-                    }
-                }
-                else {
-                    currentLexeme = lexicalAnalyser->nextToken();
-                    currentTokenName=currentLexeme.getTokenType();
-                }
-            } else {
-                cout << "Error: Expected terminal " << currentSymbol->getName() << " but found " << currentTokenName << endl;
-                cout << "Inserting missing terminal " << currentSymbol->getName() << endl;
-            }
+            if (handleTerminal(currentTokenName, isInputEnd, currentSymbol)) break;
         }
         else {
-            string nonTerminalName = currentSymbol->getName();
-            bool found = true;
-            if (!parsingTable->table[nonTerminalName].contains(currentTokenName)) {
-                cout << "Error: Unexpected token " << currentTokenName << endl;
-                found = false;
-                while (lexicalAnalyser->hasNextToken()) {
-                    currentLexeme = lexicalAnalyser->nextToken();
-                    currentTokenName=currentLexeme.getTokenType();
-                    if (parsingTable->table[nonTerminalName].contains(currentTokenName)) {
-                        found = true;
-                        break;
-                    }
-                    cout << "Error: Unexpected token " << currentTokenName << endl;
-                }
-                if (!isInputEnd && !found) {
-                    currentTokenName=Grammar::END->getName();
-                    isInputEnd=true;
-                    if (parsingTable->table[nonTerminalName].contains(currentTokenName)) {
-                        found = true;
-                    }
-                    cout << "Error: Unexpected token " << currentTokenName << endl;
-                }
-            }
-            if (!found) {
-                continue;
-            }
-            const int index = parsingTable->table[nonTerminalName][currentTokenName];
-            cout<<index<<endl;
-            // sync
-            if (index==parsingTable->SYNC) {
-                cout << "Error: Unexpected token " << currentLexeme.getTokenType() << endl;
-                continue;
-            }
-            cout<<nonTerminalName<<" "<<index<<endl;
-            cout<<currentTokenName<<endl;
-            cout<<grammar->getProductions()[nonTerminalName].size()<<endl;
-            vector<Symbol* > production = grammar->getProductions()[nonTerminalName][index];
-            cout<<"Production: ";
-            for (int i = production.size() - 1; i >= 0; i--) {
-                cout<<production[i]->getName()<<" ";
-                if (production[i]==Grammar::EPSILON) {
-                    break;
-                }
-                remainingSymbols.push(production[i]);
-            }
-            cout<<endl;
+            handleNonTerminal(currentTokenName, isInputEnd, currentSymbol);
         }
     }
     if (remainingSymbols.empty() && lexicalAnalyser->hasNextToken()) {
@@ -143,8 +166,8 @@ void InputProgramParser::printLeftMostDerivation() {
         leftMostDerivation.push_back(remainingSymbols.top());
         remainingSymbols.pop();
     }
-    if (leftMostDerivation.empty()) {
-        return;
+    for (const auto symbol:matchedTokens) {
+        output<<symbol->getName()<<" ";
     }
     for (const auto symbol:leftMostDerivation) {
         output<<symbol->getName()<<" ";

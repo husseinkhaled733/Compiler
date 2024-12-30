@@ -12,21 +12,23 @@
 using namespace std;
 
 class InputProgramParser {
-public:
-    explicit InputProgramParser(LexicalAnalyser* lexicalAnalyser, Grammar* grammar, ParsingTable* parsingTable);
+private:
     stack<Symbol*> remainingSymbols;
     LexicalAnalyser* lexicalAnalyser;
     Grammar* grammar;
     ParsingTable* parsingTable;
     Lexeme currentLexeme;
     ofstream output;
-    void parse();
+    vector<Symbol* > matchedTokens;
+    bool handleTerminal(string &currentTokenName, bool &isInputEnd, Symbol *currentSymbol);
+    void handleNonTerminal(string &currentTokenName, bool &isInputEnd, const Symbol *currentSymbol);
     void printLeftMostDerivation();
+public:
+    explicit InputProgramParser(LexicalAnalyser* lexicalAnalyser, Grammar* grammar, ParsingTable* parsingTable);
+    void parse();
     void parseInputProgram(const string &outputFilePath);
-    void handleTerminal(Symbol* currentSymbol, string& currentTokenName, bool& isInputEnd);
-    void handleNonTerminal(Symbol* currentSymbol, string& currentTokenName, bool& isInputEnd);
-    void logDebug(const string& message);
-    void handleCurrentSymbol(Symbol* currentSymbol, string& currentTokenName, bool& isInputEnd);
+    static string getName(const string &currentName);
+
 };
 
 #endif //INPUTPROGRAMPARSER_H
