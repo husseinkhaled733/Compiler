@@ -2,14 +2,14 @@
 // Created by husseinkhaled on 11/28/24.
 //
 
-#include "DFA.h"
 #include "../State.h"
-#include "../Utils.h"
 #include "../StateIdManager.h"
+#include "../Utils.h"
+#include "DFABuilder.h"
 
 using namespace std;
 
-State* DFA::convertNFAtoDFA(State *startState) {
+State* DFABuilder::convertNFAtoDFA(State *startState) {
     map<set<State*>,State*> dfaStates;
     queue<set<State*>> needToProcess;
     // To partition the final states based on their tokens
@@ -73,7 +73,7 @@ State* DFA::convertNFAtoDFA(State *startState) {
     return dfaStartState;
 }
 
-void DFA::epsilonClosure(set<State* >& states) {
+void DFABuilder::epsilonClosure(set<State* >& states) {
     std::stack<State*> stack;
     for (State* state : states) {
         stack.push(state);
@@ -92,7 +92,7 @@ void DFA::epsilonClosure(set<State* >& states) {
         }
     }
 }
-void DFA::handleTokenPriorities(State* newState, const State* currentState) {
+void DFABuilder::handleTokenPriorities(State* newState, const State* currentState) {
     if (currentState->isFinal) {
         newState->isFinal = true;
         if (newState->token.empty() || priorities[currentState->token] < priorities[newState->token]) {
@@ -101,7 +101,7 @@ void DFA::handleTokenPriorities(State* newState, const State* currentState) {
     }
 }
 
-State* DFA::minimizeDFA(State *startState) {
+State* DFABuilder::minimizeDFA(State *startState) {
     vector<unordered_set<State*>> newPartitions;
     bool changed=true;
     // Keep partitioning until no more changes
@@ -157,7 +157,7 @@ State* DFA::minimizeDFA(State *startState) {
 
 }
 
-string DFA::getStateKey(State *state, const vector<char> &inputs, const vector<unordered_set<State *>> &partitions) {
+string DFABuilder::getStateKey(State *state, const vector<char> &inputs, const vector<unordered_set<State *>> &partitions) {
     string stateKey;
     for (auto input:inputs) {
         if (state->transitions.contains(input)) {
@@ -176,7 +176,7 @@ string DFA::getStateKey(State *state, const vector<char> &inputs, const vector<u
     return stateKey;
 }
 
-void DFA::printDFA() const {
+void DFABuilder::printDFA() const {
     cout << "===================================" << endl;
     cout << "              DFA STATES            " << endl;
     cout << "===================================" << endl;
@@ -186,7 +186,7 @@ void DFA::printDFA() const {
     cout << "===================================" << endl;
 }
 
-void DFA::printMinimizedDFA() const {
+void DFABuilder::printMinimizedDFA() const {
     cout << "===================================" << endl;
     cout << "         MINIMIZED DFA STATES       " << endl;
     cout << "===================================" << endl;

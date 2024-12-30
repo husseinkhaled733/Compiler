@@ -5,13 +5,20 @@
 #ifndef LEXICALANALYSER_H
 #define LEXICALANALYSER_H
 
+#include "DFA/DFABuilder.h"
+#include "InputParser/RegexTreeBuilder.h"
 #include "Lexeme.h"
+#include "NFABuilder/NFABuilder.h"
 #include "State.h"
 #include "SymbolTableHandler.h"
 #include <bits/stdc++.h>
 
 
 class LexicalAnalyser {
+
+    RegexTreeBuilder regexTreeBuilder;
+    NFABuilder nfaBuilder;
+    DFABuilder dfaBuilder;
 
     SymbolTableHandler symbolTableHandler;
 
@@ -25,7 +32,7 @@ class LexicalAnalyser {
 
 public:
 
-    explicit LexicalAnalyser(const SymbolTableHandler& symbolTableHandler, State* startState);
+    explicit LexicalAnalyser(const std::string& rulesFilePath, const std::string& sourceFilePath);
 
     Lexeme nextToken();
     bool hasNextToken();

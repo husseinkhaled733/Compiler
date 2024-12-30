@@ -12,7 +12,8 @@
 
 class Terminal final : public Symbol {
 public:
-    Terminal(const string& name) : Symbol(name) {}
+
+    explicit Terminal(const string name) : Symbol(name) {}
     bool isTerminal() override { return true; }
 };
 

@@ -53,11 +53,8 @@ public:
     {
         followSet.insert(terminals.begin(), terminals.end());
     }
-
-    void addOccurrence(NonTerminal* nonTerminal, int derivationIndex, int inDerivationIndex) {
-        occurrencePositions.push_back(
-            new NonTerminalOccurrence(nonTerminal, derivationIndex, inDerivationIndex)
-        );
+    void addOccurrence(NonTerminalOccurrence* occurrence) {
+        occurrencePositions.push_back(occurrence);
     }
 
     unordered_set<Terminal*>& getFirstSet() {
