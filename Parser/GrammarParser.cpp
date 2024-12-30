@@ -5,61 +5,54 @@
 #include "GrammarParser.h"
 #include "ParserState.h"
 #include "LHSState.h"
+#include "ParserUtils.h"
 
-GrammarParser::GrammarParser(const std::string& fileName):
+GrammarParser::GrammarParser(const string& fileName):
     currentState(new LHSState()),
     grammar(new Grammar()),
     currentNonTerminal(nullptr) {
 
     inputFilePath.open(fileName);
     if (!inputFilePath.is_open())
-        throw std::ios_base::failure("Failed to open file: " + fileName);
-}
-
-int getStartIndex(const string& buffer) {
-    int startIndex = 0;
-    while (buffer[startIndex] != '#')
-        startIndex++;
-    return startIndex + 1;
-}
-
-bool isWordCharacter(const char c) {
-    return isalnum(static_cast<unsigned char>(c)) || c == '_';
+        throw ios_base::failure("Failed to open file: " + fileName);
 }
 
 void GrammarParser::readNonTerminals(const string& buffer) {
     const int bufferSize = buffer.size();
     string currentLHS = "";
-    int index = getStartIndex(buffer);
+
+    int index = 1;
 
     while (index < bufferSize) {
-        if (Grammar::IGNORED_CHARS.contains(buffer[index])) {
-            index++;
-            continue;
-        }
-
-        if (!isWordCharacter(buffer[index]))
-            throw invalid_argument("Invalid character in LHS: " +
-                string(1, buffer[index]));
 
         if (string assignment = buffer.substr(index, 3); assignment == "::=") {
+            trim(currentLHS);
+            validateNonTerminal(currentLHS);
+
             grammar->addNonTerminal(new NonTerminal(currentLHS));
-            while (buffer[index] != '#') index++;
+
+            if (grammar->getStartSymbol() == nullptr)
+                grammar->setStartSymbol(grammar->getNonTerminals()[currentLHS]);
+
+            while (buffer[index] != '#' and index < bufferSize)
+                index++;
+
             index++;
             currentLHS = "";
             continue;
         }
 
-        currentLHS += buffer[index];
-        index++;
+        currentLHS += buffer[index++];
     }
 }
 
 Grammar* GrammarParser::parseGrammar() {
-    const string buffer = readInputFile();
+    string buffer = readInputFile();
+
+    trim(buffer);
     readNonTerminals(buffer);
 
-    int index = getStartIndex(buffer);
+    int index = 1;
     while (index < buffer.size())
         currentState->parse(*this, buffer, index);
 

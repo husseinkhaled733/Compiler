@@ -12,15 +12,14 @@ using namespace std;
 
 class Grammar {
 public:
-    static const Terminal* EPSILON;
-    static const Terminal* END;
+    static Terminal* EPSILON;
+    static Terminal* END;
     static const set<string> RESERVED_SYMBOLS;
     static const set<char> IGNORED_CHARS;
 
 private:
     NonTerminal* startSymbol;
     unordered_map<string, NonTerminal*> nonTerminals;
-    unordered_map<string, Terminal*> terminals;
     unordered_map<string, vector<vector<Symbol*>>> productions;
 
 public:
@@ -31,7 +30,6 @@ public:
     unordered_map<string, Terminal*>& getTerminals();
     unordered_map<string, vector<vector<Symbol*>>>& getProductions();
 
-    void addTerminal(Terminal* terminal);
     void addNonTerminal(NonTerminal* nonTerminal);
     void setStartSymbol(NonTerminal* startSymbol);
     void addProduction(NonTerminal* nonTerminal, vector<Symbol*> production);
