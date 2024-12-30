@@ -3,7 +3,7 @@
 //
 
 #include "LexicalAnalyser.h"
-
+#include "Utils.h"
 #include "InputParser/Constants.h"
 
 LexicalAnalyser::LexicalAnalyser(const std::string& rulesFilePath, const std::string& sourceFilePath)
@@ -15,6 +15,7 @@ LexicalAnalyser::LexicalAnalyser(const std::string& rulesFilePath, const std::st
       minimalDFAStartState(nullptr),
       currentIndexInSource(0) {
 
+    priorities = regexTreeBuilder.tokensPriorities;
     this->minimalDFAStartState = dfaBuilder.minimizeDFA(
         dfaBuilder.convertNFAtoDFA(nfaBuilder.buildNFA())
     );

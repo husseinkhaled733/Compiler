@@ -128,7 +128,9 @@ ParsingTable ParsingTableGenerator::generateParsingTable() {
          }
          if(!nonTerminalObj->isNullable()){
              for(const auto follow:nonTerminalObj->getFollowSet()){
-                 addToParsingTable(parsingTable,nonTerminalString,follow,ParsingTable::SYNC);
+                 if (!nonTerminalObj->getFirstSet().contains(follow)){
+                     addToParsingTable(parsingTable,nonTerminalString,follow,ParsingTable::SYNC);
+                 }
              }
          }
      }

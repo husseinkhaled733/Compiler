@@ -1,15 +1,19 @@
 
+#include <bits/stdc++.h>
 
 #include "Parser/Grammar.h"
 #include "Parser/GrammarParser.h"
 #include "Parser/ParsingTableGenerator.h"
 #include "Parser/InputProgramParser/InputProgramParser.h"
 
+#include "Parser/GrammarParser.h"
+#include "Parser/InputProgramParser/InputProgramParser.h"
+using namespace std;
 int main() {
-    string grammarPath = "C:/Users/mariam/Compiler/io/grammar.txt";
-    string regexPath ="C:/Users/mariam/Compiler/io/regex.txt";
-    string inputPath ="C:/Users/mariam/Compiler/io/input.txt";
-    string outputParserPath ="C:/Users/mariam/Compiler/io/outputParser.txt";
+    string grammarPath = "/home/husseinkhaled/Compiler/io/grammar.txt";
+    string regexPath ="/home/husseinkhaled/Compiler/io/regex.txt";
+    string inputPath ="/home/husseinkhaled/Compiler/io/input.txt";
+    string outputParserPath ="/home/husseinkhaled/Compiler/io/outputParser.txt";
 
     GrammarParser parser(grammarPath);
     Grammar* grammar = parser.parseGrammar();
@@ -21,6 +25,5 @@ int main() {
     LexicalAnalyser lexicalAnalyser(regexPath,inputPath);
     InputProgramParser inputProgramParser(&lexicalAnalyser, grammar, &parsingTable);
     inputProgramParser.parseInputProgram(outputParserPath);
-
     return 0;
 }
