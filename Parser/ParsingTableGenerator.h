@@ -16,11 +16,12 @@ private:
     void findFirst(NonTerminal* nonTerminal);
     void findFollowUtil();
     void findFollow(NonTerminal* nonTerminal);
-    void setOccurrenceInDerivations(Terminal* firstSymbol, int index);
+    static void addToParsingTable(ParsingTable &parsingTable, const string &nonTerminalString, Symbol *firstSymbol,int index) ;
 public:
     Grammar* grammar;
-    explicit ParsingTableGenerator(Grammar* grammar);
+    explicit ParsingTableGenerator(Grammar* grammar) : grammar(grammar) {}
     ParsingTable generateParsingTable();
+    void printFirstAndFollow();
 };
 
 

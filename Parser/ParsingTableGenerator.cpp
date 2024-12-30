@@ -6,165 +6,155 @@
 #include "ParsingTable.h"
 #include "Grammar.h"
 
-/* grammar have
- *  unordered_map<string, NonTerminal*> nonTerminals;
-    unordered_map<string, vector<vector<Symbol*>>> productions;
- */
-
 
 void ParsingTableGenerator::findFirstUtil() {
     for (const auto& nonTerminal : views::values(grammar->getNonTerminals())) {
-        if(nonTerminal->getFirstSet().empty()){
             findFirst(nonTerminal);
-        }
     }
 }
 void ParsingTableGenerator::findFirst(NonTerminal* nonTerminal) {
-    string nonTerminalString = nonTerminal->getName();
-    auto derivations = grammar->getProductions()[nonTerminalString];
-    for (int index = 0; derivations.size(); index++)
-    {
-        auto derivation = derivations[index];
+    if(!nonTerminal->getFirstSet().empty()) return;
+
+    const auto& derivations = grammar->getProductions()[nonTerminal->getName()];
+
+    for (const auto& derivation : derivations) {
         Symbol* firstSymbol = derivation.front();
+
         if (firstSymbol->isTerminal()){
-            setOccurrenceInDerivations(dynamic_cast<Terminal*>(firstSymbol), index);
             nonTerminal->addToFirstSet(dynamic_cast<Terminal*>(firstSymbol));
         }
         else{
-            if(grammar->getNonTerminals()[firstSymbol->getName()]->getFirstSet().empty()) {
-                findFirst(dynamic_cast<NonTerminal*>(firstSymbol));
-            }
-            nonTerminal-> addToFirstSet(dynamic_cast<NonTerminal*>(firstSymbol)->getFirstSet());
+            auto* nonTerminalSymbol = dynamic_cast<NonTerminal*>(firstSymbol);
+            findFirst(nonTerminalSymbol);
+            nonTerminal-> addToFirstSet(nonTerminalSymbol->getFirstSet());
         }
     }
 }
-void ParsingTableGenerator::setOccurrenceInDerivations(Terminal* firstSymbol, int index)
-{
-    if (firstSymbol->getOccurrenceInDerivations() != -1) {
-        cout<<"ERROR";
-    } else {
-        firstSymbol->setOccurrenceInDerivations(index);
+
+void ParsingTableGenerator::findFollowUtil()  {
+    for (const auto &nonTerminal: views::values(grammar->getNonTerminals())) {
+        findFollow(nonTerminal);
     }
-
 }
-// iterate over key of the production for each non-terminal  do
-// iterate for each entry on the right hand side
-// for first symbol in the entry
-// if it's terminal -> you found the first (update FIRST map)
-// else -> check the first
-// if the current symbol is calculated -> we found the FIRST
-// else  -> call FIRST(current non-terminal)
-/*
- * class NonTerminalOccurrence {
-    public:
-        NonTerminal* nonTerminal;    LHS => a a a | b b b
-        int derivationIndex;
-        int inDerivationIndex;
-
-        NonTerminalOccurrence(NonTerminal* nt, const int derivationIdx, const int inDerivationIdx)
-            : nonTerminal(nt), derivationIndex(derivationIdx), inDerivationIndex(inDerivationIdx) {}
-    };
- */
 
 void ParsingTableGenerator:: findFollow(NonTerminal* nonTerminal){
     if (!nonTerminal->getFollowSet().empty()) return;
+    if(nonTerminal == grammar->getStartSymbol()){
+        auto endTerminal = std::make_unique<Terminal>(Grammar::END->getName());
+        grammar->getStartSymbol()->addToFollowSet(endTerminal.get());
+    }
     auto occurrences = nonTerminal->getOccurrencePositions();
-    // Non Terminal (LHS) => aaa | ddd | ddd
     for(const auto occurrence : occurrences){
-        // in case it is the last
-        // in case the next exists
-        // F => T X Y
         const auto LHS = occurrence->nonTerminal;
-
-        vector<vector<Symbol*>> derivations = grammar->getProductions()[LHS->getName()];
-
-        auto derivation = derivations[occurrence->derivationIndex];
-
-        if (occurrence->inDerivationIndex == derivation.size() - 1)
-        {
-            // case last
-            if (LHS == derivation[occurrence->inDerivationIndex])
+        auto derivation = grammar->getProductions()[LHS->getName()][occurrence->derivationIndex];
+        //case last
+        if (occurrence->inDerivationIndex == derivation.size() - 1) {
+            if (LHS == derivation[occurrence->inDerivationIndex]) continue;
+            findFollow(LHS);
+            nonTerminal->addToFollowSet(LHS->getFollowSet());
+        }
+        else{
+            auto nextDerivative = derivation[occurrence->inDerivationIndex + 1];
+            if (nextDerivative->isTerminal())
             {
-
-                if (LHS == derivation[occurrence->inDerivationIndex]) continue;
-                // get the follow of LHS
-                // if it includes epsilon then get its follow
-                findFollow(LHS);
-                nonTerminal->addToFollowSet(LHS->getFollowSet());
+                nonTerminal->addToFollowSet(dynamic_cast<Terminal*>(nextDerivative));
             }
             else
             {
-                auto nextDerivative = derivation[occurrence->inDerivationIndex + 1];
-                if (nextDerivative->isTerminal())
+                auto* nextDerivativeNT = dynamic_cast<NonTerminal*>(nextDerivative);
+                for (auto first: nextDerivativeNT->getFirstSet())
                 {
-                    nonTerminal->addToFollowSet(dynamic_cast<Terminal*>(nextDerivative));
-                }
-                else
-                {
-                    NonTerminal* nextDerivativeNT = dynamic_cast<NonTerminal*>(nextDerivative);
-                    for (auto first: nextDerivativeNT->getFirstSet())
+                    if (first == Grammar::EPSILON)
                     {
-                        if (first == Grammar::EPSILON)
-                        {
-                            findFollow(nextDerivativeNT);
-                            nonTerminal->addToFollowSet(nextDerivativeNT->getFollowSet());
-                        } else
-                        {
-                            nonTerminal->addToFollowSet(first);
-                        }
+                        findFollow(nextDerivativeNT);
+                        nonTerminal->addToFollowSet(nextDerivativeNT->getFollowSet());
+                    } else
+                    {
+                        nonTerminal->addToFollowSet(first);
                     }
-                    // if (
-                    // nonTerminal->isNullable())
-                    // {
-                    //     findFollow(LHS);
-                    //     nonTerminal->getFollowSet().erase(grammar->EPSILON);
-                    //     nonTerminal->addToFollowSet(LHS->getFollowSet());
-                    // }
                 }
+
             }
         }
     }
-
 }
-void ParsingTableGenerator::findFollowUtil()
-{
 
-    for (const auto& nonTerminal : views::values(grammar->getNonTerminals()))
-    {
-        findFollow(nonTerminal);
+void ParsingTableGenerator::addToParsingTable(ParsingTable& parsingTable, const string& nonTerminalString, Symbol* firstSymbol, int index) {
+    // Check if the terminal is already in the table for the non-terminal
+    if (parsingTable.table[nonTerminalString].find(firstSymbol->getName()) != parsingTable.table[nonTerminalString].end()) {
+        throw std::runtime_error("Error: language is not LL(1) - conflict detected for "
+                                 + nonTerminalString + " and " + firstSymbol->getName());
     }
-    // iterate over key of the production for each non-terminal do
-        // iterate over occurrences of this non-terminal
-            // for each occurrence
-                // if it's not the last symbol -> put the forward of current as first of next
-                // else ->
-                    // if the forward of its non-terminal calculated -> put the forward of the current  as forward of
-                    // else calculate the forward
+    // If no conflict, add the rule to the parsing table
+    parsingTable.table[nonTerminalString][firstSymbol->getName()] = index;
 }
-/*
-class ParsingTable {
-public:
-    const int SYNC = -1;
-    unordered_map<string, unordered_map<string, int>> table;
-};
- */
+
 ParsingTable ParsingTableGenerator::generateParsingTable() {
-     ParsingTable parsingTable;
-     for(auto [nonTerminalString , nonTerminalObj]  : grammar->getNonTerminals()){
-         for(auto first : nonTerminalObj->getFirstSet()){
-             if(first == Grammar::EPSILON){
-                 for(auto follow : nonTerminalObj->getFollowSet()){
-                     parsingTable.table[nonTerminalString][follow->getName()] = follow->getOccurrenceInDerivations();
+    findFirstUtil();
+    findFollowUtil();
+    ParsingTable parsingTable;
+     for(auto& [nonTerminalString , nonTerminalObj]  : grammar->getNonTerminals()){
+         auto derivations = grammar->getProductions()[nonTerminalString];
+         for (int index = 0; index < derivations.size(); index++){
+             auto derivation = derivations[index];
+             Symbol* firstSymbol = derivation.front();
+             if (firstSymbol->isTerminal()){
+                 if(firstSymbol == Grammar::EPSILON){
+                     for (auto follow : nonTerminalObj->getFollowSet()) {
+                         addToParsingTable(parsingTable, nonTerminalString, follow, index);
+                     }
+                 }
+                 else {
+                     addToParsingTable(parsingTable, nonTerminalString, firstSymbol, index);
                  }
              }
              else{
-                 parsingTable.table[nonTerminalString][first ->getName()] = first->getOccurrenceInDerivations();
+                 auto firstNonTerminal = dynamic_cast<NonTerminal*>(firstSymbol)->getFirstSet();
+                 for(auto first : firstNonTerminal){
+                     if(first == Grammar::EPSILON){
+                         auto* firstNonTerminalObj = dynamic_cast<NonTerminal*>(firstSymbol);
+                         if (firstNonTerminalObj) {
+                             for (auto follow : firstNonTerminalObj->getFollowSet()) {
+                                 addToParsingTable(parsingTable, nonTerminalString, follow, index);
+                             }
+                         }
+                     }
+                     else{
+                         addToParsingTable(parsingTable, nonTerminalString, first, index);
+
+                     }
+                 }
+             }
+         }
+         if(!nonTerminalObj->isNullable()){
+             for(const auto follow:nonTerminalObj->getFollowSet()){
+                 addToParsingTable(parsingTable,nonTerminalString,follow,ParsingTable::SYNC);
              }
          }
      }
      return parsingTable ;
 }
-ParsingTableGenerator::ParsingTableGenerator(Grammar* grammar) {
-    grammar = grammar;
-}
 
+
+void ParsingTableGenerator::printFirstAndFollow() {
+    cout << "First and Follow Sets for Non-Terminals:" << endl;
+    for (const auto& [nonTerminalString, nonTerminalObj] : grammar->getNonTerminals()) {
+        // Print the First set
+        cout << "Non-Terminal: " << nonTerminalString << endl;
+
+        cout << "  First: { ";
+        for (const auto terminal : nonTerminalObj->getFirstSet()) {
+            cout << terminal->getName() << " ";
+        }
+        cout << "}" << endl;
+
+        // Print the Follow set
+        cout << "  Follow: { ";
+        for (const auto terminal : nonTerminalObj->getFollowSet()) {
+            cout << terminal->getName() << " ";
+        }
+        cout << "}" << endl;
+
+        cout << endl;
+    }
+}

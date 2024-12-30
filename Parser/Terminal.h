@@ -12,12 +12,8 @@
 
 class Terminal final : public Symbol {
 public:
-    Terminal(const string& name) : Symbol(name) {occurrenceInDerivations = -1;}
+    Terminal(const string& name) : Symbol(name) {}
     bool isTerminal() override { return true; }
-    int getOccurrenceInDerivations() const {return occurrenceInDerivations;}
-    void setOccurrenceInDerivations(const int ind){ occurrenceInDerivations = ind;}
-private:
-    int occurrenceInDerivations;
 };
 
 template <>

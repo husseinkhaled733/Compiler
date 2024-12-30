@@ -13,10 +13,10 @@ using namespace std;
 
 class ParsingTable {
 public:
-    const int SYNC = -1;
+    static const int SYNC = -1;
     unordered_map<string, unordered_map<string, int>> table;
+    void printParsingTable(unordered_map<string, vector<vector<Symbol *>>>&productions) const;
 };
-
 
 
 #endif //PARSINGTABLE_H
