@@ -14,6 +14,7 @@ int main() {
     string regexPath ="/home/husseinkhaled/Compiler/io/regex.txt";
     string inputPath ="/home/husseinkhaled/Compiler/io/input.txt";
     string outputParserPath ="/home/husseinkhaled/Compiler/io/outputParser.txt";
+    string debugParserPath ="/home/husseinkhaled/Compiler/io/debugParser.txt";
 
     GrammarParser parser(grammarPath);
     Grammar* grammar = parser.parseGrammar();
@@ -24,6 +25,6 @@ int main() {
     parsingTable.printParsingTable(grammar->getProductions());
     LexicalAnalyser lexicalAnalyser(regexPath,inputPath);
     InputProgramParser inputProgramParser(&lexicalAnalyser, grammar, &parsingTable);
-    inputProgramParser.parseInputProgram(outputParserPath);
+    inputProgramParser.parseInputProgram(outputParserPath, debugParserPath);
     return 0;
 }

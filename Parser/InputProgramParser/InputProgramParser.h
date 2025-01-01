@@ -18,6 +18,7 @@ private:
     Grammar* grammar;
     ParsingTable* parsingTable;
     ofstream output;
+    ofstream debug;
     vector<Symbol* > matchedTokens;
     bool handleTerminal(string &currentTokenName, bool &isInputEnd, Symbol *currentSymbol);
     void handleNonTerminal(string &currentTokenName, bool &isInputEnd, const Symbol *currentSymbol);
@@ -25,8 +26,9 @@ private:
 public:
     explicit InputProgramParser(LexicalAnalyser* lexicalAnalyser, Grammar* grammar, ParsingTable* parsingTable);
     void parse();
-    void parseInputProgram(const string &outputFilePath);
+    void parseInputProgram(const string &outputFilePath, const string &debugFilePath);
     static string getName(const string &currentName);
+    void printCurrentStack();
 
 };
 

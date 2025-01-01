@@ -1,0 +1,261 @@
+--------------------------------------------------------------------------------
+Current stack: $ METHOD_BODY 
+Current Top of the stack: METHOD_BODY
+Current input token: int
+Action: METHOD_BODY -> STATEMENT_LIST 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST 
+Current Top of the stack: STATEMENT_LIST
+Current input token: int
+Action: STATEMENT_LIST -> STATEMENT_LIST_DASH STATEMENT 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH STATEMENT 
+Current Top of the stack: STATEMENT
+Current input token: int
+Action: STATEMENT -> DECLARATION 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH DECLARATION 
+Current Top of the stack: DECLARATION
+Current input token: int
+Action: DECLARATION -> ; id PRIMITIVE_TYPE 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; id PRIMITIVE_TYPE 
+Current Top of the stack: PRIMITIVE_TYPE
+Current input token: int
+Action: PRIMITIVE_TYPE -> int 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; id int 
+Current Top of the stack: int
+Current input token: int
+Action: A match found for token: int
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; id 
+Current Top of the stack: id
+Current input token: id
+Action: A match found for token: id
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; 
+Current Top of the stack: ;
+Current input token: ;
+Action: A match found for token: ;
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH 
+Current Top of the stack: STATEMENT_LIST_DASH
+Current input token: id
+Action: STATEMENT_LIST_DASH -> STATEMENT_LIST_DASH STATEMENT 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH STATEMENT 
+Current Top of the stack: STATEMENT
+Current input token: id
+Action: STATEMENT -> ASSIGNMENT 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ASSIGNMENT 
+Current Top of the stack: ASSIGNMENT
+Current input token: id
+Action: ASSIGNMENT -> ; EXPRESSION assign id 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION assign id 
+Current Top of the stack: id
+Current input token: id
+Action: A match found for token: id
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION assign 
+Current Top of the stack: assign
+Current input token: assign
+Action: A match found for token: assign
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION 
+Current Top of the stack: EXPRESSION
+Current input token: num
+Action: EXPRESSION -> EXPRESSION_DASH SIMPLE_EXPRESSION 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION 
+Current Top of the stack: SIMPLE_EXPRESSION
+Current input token: num
+Action: SIMPLE_EXPRESSION -> SIMPLE_EXPRESSION_DASH TERM 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM 
+Current Top of the stack: TERM
+Current input token: num
+Action: TERM -> TERM_DASH FACTOR 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM_DASH FACTOR 
+Current Top of the stack: FACTOR
+Current input token: num
+Action: FACTOR -> num 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM_DASH num 
+Current Top of the stack: num
+Current input token: num
+Action: A match found for token: num
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM_DASH 
+Current Top of the stack: TERM_DASH
+Current input token: if
+Error: Unexpected token if
+Entry not found in parsing table for non-terminal TERM_DASH and token if
+Action: Ignore token if
+--------------------------------------------------------------------------------
+Current input token: (
+Error: Unexpected token (
+Entry not found in parsing table for non-terminal TERM_DASH and token (
+Action: Ignore token (
+--------------------------------------------------------------------------------
+Current input token: id
+Error: Unexpected token id
+Entry not found in parsing table for non-terminal TERM_DASH and token id
+Action: Ignore token id
+--------------------------------------------------------------------------------
+Current input token: relop
+Action: TERM_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH 
+Current Top of the stack: SIMPLE_EXPRESSION_DASH
+Current input token: relop
+Action: SIMPLE_EXPRESSION_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH 
+Current Top of the stack: EXPRESSION_DASH
+Current input token: relop
+Action: EXPRESSION_DASH -> SIMPLE_EXPRESSION relop 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION relop 
+Current Top of the stack: relop
+Current input token: relop
+Action: A match found for token: relop
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION 
+Current Top of the stack: SIMPLE_EXPRESSION
+Current input token: num
+Action: SIMPLE_EXPRESSION -> SIMPLE_EXPRESSION_DASH TERM 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION_DASH TERM 
+Current Top of the stack: TERM
+Current input token: num
+Action: TERM -> TERM_DASH FACTOR 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION_DASH TERM_DASH FACTOR 
+Current Top of the stack: FACTOR
+Current input token: num
+Action: FACTOR -> num 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION_DASH TERM_DASH num 
+Current Top of the stack: num
+Current input token: num
+Action: A match found for token: num
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION_DASH TERM_DASH 
+Current Top of the stack: TERM_DASH
+Current input token: )
+Action: TERM_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; SIMPLE_EXPRESSION_DASH 
+Current Top of the stack: SIMPLE_EXPRESSION_DASH
+Current input token: )
+Action: SIMPLE_EXPRESSION_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; 
+Current Top of the stack: ;
+Current input token: )
+Error: Expected token ; but found )
+Action: Inserting missing terminal ;
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH 
+Current Top of the stack: STATEMENT_LIST_DASH
+Current input token: )
+Error: Unexpected token )
+Entry not found in parsing table for non-terminal STATEMENT_LIST_DASH and token )
+Action: Ignore token )
+--------------------------------------------------------------------------------
+Current input token: {
+Error: Unexpected token {
+Entry not found in parsing table for non-terminal STATEMENT_LIST_DASH and token {
+Action: Ignore token {
+--------------------------------------------------------------------------------
+Current input token: id
+Action: STATEMENT_LIST_DASH -> STATEMENT_LIST_DASH STATEMENT 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH STATEMENT 
+Current Top of the stack: STATEMENT
+Current input token: id
+Action: STATEMENT -> ASSIGNMENT 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ASSIGNMENT 
+Current Top of the stack: ASSIGNMENT
+Current input token: id
+Action: ASSIGNMENT -> ; EXPRESSION assign id 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION assign id 
+Current Top of the stack: id
+Current input token: id
+Action: A match found for token: id
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION assign 
+Current Top of the stack: assign
+Current input token: assign
+Action: A match found for token: assign
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION 
+Current Top of the stack: EXPRESSION
+Current input token: num
+Action: EXPRESSION -> EXPRESSION_DASH SIMPLE_EXPRESSION 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION 
+Current Top of the stack: SIMPLE_EXPRESSION
+Current input token: num
+Action: SIMPLE_EXPRESSION -> SIMPLE_EXPRESSION_DASH TERM 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM 
+Current Top of the stack: TERM
+Current input token: num
+Action: TERM -> TERM_DASH FACTOR 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM_DASH FACTOR 
+Current Top of the stack: FACTOR
+Current input token: num
+Action: FACTOR -> num 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM_DASH num 
+Current Top of the stack: num
+Current input token: num
+Action: A match found for token: num
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH TERM_DASH 
+Current Top of the stack: TERM_DASH
+Current input token: ;
+Action: TERM_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH SIMPLE_EXPRESSION_DASH 
+Current Top of the stack: SIMPLE_EXPRESSION_DASH
+Current input token: ;
+Action: SIMPLE_EXPRESSION_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; EXPRESSION_DASH 
+Current Top of the stack: EXPRESSION_DASH
+Current input token: ;
+Action: EXPRESSION_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH ; 
+Current Top of the stack: ;
+Current input token: ;
+Action: A match found for token: ;
+--------------------------------------------------------------------------------
+Current stack: $ STATEMENT_LIST_DASH 
+Current Top of the stack: STATEMENT_LIST_DASH
+Current input token: }
+Error: Unexpected token }
+Entry not found in parsing table for non-terminal STATEMENT_LIST_DASH and token }
+Action: Ignore token }
+--------------------------------------------------------------------------------
+Current input token: $
+Error: Unexpected token $
+Entry not found in parsing table for non-terminal STATEMENT_LIST_DASH and token $
+Action: Ignore token $
+--------------------------------------------------------------------------------
+Action: STATEMENT_LIST_DASH -> Epsilon 
+--------------------------------------------------------------------------------
+Current stack: $ 
+Current Top of the stack: $
+Current input token: $
+Action: A match found for token: $
+Parsing completed successfully.

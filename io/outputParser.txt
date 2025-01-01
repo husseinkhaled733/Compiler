@@ -1,0 +1,32 @@
+METHOD_BODY 
+STATEMENT_LIST 
+STATEMENT STATEMENT_LIST_DASH 
+DECLARATION STATEMENT_LIST_DASH 
+PRIMITIVE_TYPE id ; STATEMENT_LIST_DASH 
+int id ; STATEMENT_LIST_DASH 
+int id ; STATEMENT STATEMENT_LIST_DASH 
+int id ; ASSIGNMENT STATEMENT_LIST_DASH 
+int id ; id assign EXPRESSION ; STATEMENT_LIST_DASH 
+int id ; id assign SIMPLE_EXPRESSION EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign TERM SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign FACTOR TERM_DASH SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num TERM_DASH SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop SIMPLE_EXPRESSION ; STATEMENT_LIST_DASH 
+int id ; id assign num relop TERM SIMPLE_EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop FACTOR TERM_DASH SIMPLE_EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num TERM_DASH SIMPLE_EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num SIMPLE_EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; STATEMENT STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; ASSIGNMENT STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign EXPRESSION ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign SIMPLE_EXPRESSION EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign TERM SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign FACTOR TERM_DASH SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign num TERM_DASH SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign num SIMPLE_EXPRESSION_DASH EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign num EXPRESSION_DASH ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign num ; STATEMENT_LIST_DASH 
+int id ; id assign num relop num ; id assign num ; 
