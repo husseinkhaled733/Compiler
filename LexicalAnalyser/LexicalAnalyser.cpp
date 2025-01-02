@@ -2,8 +2,9 @@
 // Created by mohamed_anwar on 11/27/24.
 //
 
-#include "LexicalAnalyser.h"
 #include "Utils.h"
+#include "LexicalAnalyser.h"
+
 #include "InputParser/Constants.h"
 
 LexicalAnalyser::LexicalAnalyser(const std::string& rulesFilePath, const std::string& sourceFilePath)

@@ -87,6 +87,25 @@ NonTerminal* RHSState::parseNonTerminal(const GrammarParser& parser,
     return nonTerminals.at(longestNonTerminalName);
 }
 
+void validateEpsilonProduction(NonTerminal* currentNonTerminal, const GrammarParser& parser) {
+    if (currentNonTerminal == nullptr)
+        return;
+
+    const auto& productions = parser.getGrammar()->getProductions()
+        [currentNonTerminal->getName()];
+
+    for (const auto& production : productions) {
+        if (production.size() == 1) {
+            if (Symbol* symbol = production[0];
+                dynamic_cast<Terminal*>(symbol) && symbol == Grammar::EPSILON) {
+                currentNonTerminal->setNullable(true);
+                break;
+            }
+        }
+    }
+}
+
+
 void RHSState::parse(GrammarParser& parser, const string& buffer, int& index) {
     const int bufferSize = buffer.size();
 
@@ -101,6 +120,7 @@ void RHSState::parse(GrammarParser& parser, const string& buffer, int& index) {
             parser.setState(new LHSState());
             parser.setCurrentNonTerminal(nullptr);
             parser.getGrammar()->addProduction(currentNonTerminal, production);
+            validateEpsilonProduction(currentNonTerminal, parser);
             index++;
             return;
         }
@@ -114,10 +134,8 @@ void RHSState::parse(GrammarParser& parser, const string& buffer, int& index) {
         // terminal
         if (buffer[index] == '\'') {
             auto terminal = parseTerminal(parser, buffer, index);
-            if (terminal->getName() == "\\L") {
-                currentNonTerminal->setNullable(true);
+            if (terminal->getName() == "\\L")
                 terminal = Grammar::EPSILON;
-            }
             production.push_back(terminal);
             continue;
         }
@@ -141,4 +159,6 @@ void RHSState::parse(GrammarParser& parser, const string& buffer, int& index) {
 
     if (!production.empty())
         parser.getGrammar()->addProduction(currentNonTerminal, production);
+
+    validateEpsilonProduction(currentNonTerminal, parser);
 }

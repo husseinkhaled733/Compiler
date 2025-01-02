@@ -16,15 +16,5 @@ int main() {
     string outputParserPath ="/home/husseinkhaled/Compiler/io/outputParser.txt";
     string debugParserPath ="/home/husseinkhaled/Compiler/io/debugParser.txt";
 
-    GrammarParser parser(grammarPath);
-    Grammar* grammar = parser.parseGrammar();
-    grammar->printGrammar();
-    ParsingTableGenerator parsingTableGenerator(grammar);
-    ParsingTable parsingTable = parsingTableGenerator.generateParsingTable();
-    parsingTableGenerator.printFirstAndFollow();
-    parsingTable.printParsingTable(grammar->getProductions());
-    LexicalAnalyser lexicalAnalyser(regexPath,inputPath);
-    InputProgramParser inputProgramParser(&lexicalAnalyser, grammar, &parsingTable);
-    inputProgramParser.parseInputProgram(outputParserPath, debugParserPath);
     return 0;
 }
