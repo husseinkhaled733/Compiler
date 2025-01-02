@@ -33,8 +33,8 @@ add_executable(Compiler main.cpp
         LexicalAnalyser/StateIdManager.h
         LexicalAnalyser/Utils.h
         LexicalAnalyser/Utils.cpp
-        LexicalAnalyser/DFA/DFA.h
-        LexicalAnalyser/DFA/DFA.cpp
+        LexicalAnalyser/DFA/DFABuilder.h
+        LexicalAnalyser/DFA/DFABuilder.cpp
         LexicalAnalyser/Lexeme.cpp
         LexicalAnalyser/Lexeme.h
         LexicalAnalyser/LexicalAnalyser.cpp
@@ -44,4 +44,22 @@ add_executable(Compiler main.cpp
         LexicalAnalyser/InputParser/TreeParsingUtilities.cpp
         LexicalAnalyser/InputParser/TreeParsingUtilities.h
         LexicalAnalyser/DotExporter.h
+        Parser/ParsingTableGenerator.cpp
+        Parser/ParsingTableGenerator.h
+        Parser/NonTerminal.h
+        Parser/Symbol.h
+        Parser/Terminal.h
+        Parser/Grammar.h
+        Parser/Grammar.cpp
+        Parser/GrammarParser.h
+        Parser/GrammarParser.cpp
+        Parser/ParserUtils.h
+        Parser/LHSState.h
+        Parser/LHSState.cpp
+        Parser/RHSState.h
+        Parser/RHSState.cpp
+        Parser/ParsingTable.cpp
+        Parser/ParsingTable.h
+        Parser/InputProgramParser/InputProgramParser.h
+        Parser/InputProgramParser/InputProgramParser.cpp
 )
